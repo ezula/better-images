@@ -13,7 +13,7 @@ $DEBUG_LOGGER = true;
 $PLUGIN_VERSION = '0.0.2';
 
 // Default plugin values
-if(get_option('bi_better_images_version') != $PLUGIN_VERSION) {
+if (get_option('bi_better_images_version') != $PLUGIN_VERSION) {
 
     add_option('bi_better_images_version', 			$PLUGIN_VERSION, '','yes');
     add_option('bi_better_images_width', 				'2560', '', 'yes');
@@ -24,8 +24,18 @@ if(get_option('bi_better_images_version') != $PLUGIN_VERSION) {
 // Hook in the options page
 add_action('admin_menu', 'bi_better_images_options_page');
 
+// Hook in all the filters and actions
+
+add_filter('wp_handle_upload_prefilter', 'tp_validate_image');
+add_filter('sanitize_file_name', 'tp_sanitize_file_name', 10, 1);
+add_filter( 'big_image_size_threshold', '__return_false' );
+add_filter('image_make_intermediate_size', 'tp_sharpen_resized_files', 900);
+add_filter('wp_generate_attachment_metadata', 'tp_finialize_upload');
+
+add_action('wp_handle_upload', 'tp_resize_uploaded');
+
 /**
-* Add the options page
+* Add the options page.
 */
 function bi_better_images_options_page() {
     global $bi_settings_page;
@@ -40,57 +50,48 @@ function bi_better_images_options_page() {
 	}
 }
 
-
-
 /**
-* Define the Options page for the plugin
+* Define the options page for the plugin.
 */
 function bi_better_images_options() {
 
-    if(isset($_POST['bi-options-update'])) {
+    if (isset($_POST['bi-options-update'])) {
   
-        if(!(current_user_can('manage_options') &&
-            wp_verify_nonce($_POST['_wpnonce'], 'bi-options-update'))) {
+        if (!(current_user_can('manage_options')
+            && wp_verify_nonce($_POST['_wpnonce'], 'bi-options-update'))) {
+
             wp_die("Not authorized");
         }
-
-        tp_debug_log("nu sätter vi skiten till " . intval($_POST['quality']));
   
         $max_width   = intval($_POST['maxwidth']);
         $max_height  = intval($_POST['maxheight']);
         $compression_level    = intval($_POST['quality']);
   
-        // If input is not an integer, use previous setting
         $max_width = ($max_width == '') ? 0 : $max_width;
         $max_width = (ctype_digit(strval($max_width)) == false) ? get_option('bi_better_images_width') : $max_width;
         update_option('bi_better_images_width',$max_width);
     
-    
         $max_height = ($max_height == '') ? 0 : $max_height;
         $max_height = (ctype_digit(strval($max_height)) == false) ? get_option('bi_better_images_height') : $max_height;
         update_option('bi_better_images_height',$max_height);
-    
     
         $compression_level = ($compression_level == '') ? 1 : $compression_level;
         $compression_level = (ctype_digit(strval($compression_level)) == false) ? get_option('bi_better_images_quality') : $compression_level;
     
         if($compression_level < 1) {
             $compression_level = 1;
-        }
-        else if($compression_level > 100) {
+        } else if($compression_level > 100) {
             $compression_level = 100;
         }
     
         update_option('bi_better_images_quality', $compression_level);
-    
         echo('<div id="message" class="updated fade"><p><strong>Options have been updated.</strong></p></div>');
     }
   
-    // get options and show settings form
     $compression_level  = intval(get_option('bi_better_images_quality'));
-  
     $max_width     = get_option('bi_better_images_width');
     $max_height    = get_option('bi_better_images_height');
+
   ?>
 
   
@@ -157,19 +158,27 @@ function bi_better_images_options() {
   
   </div>
   <?php
-  }
+}
 
 
-// 1. Check if filename already exists, exit if duplicate.
+/**
+ * Do image validations.
+ * 
+ * - check if filename already exists (cancel upload if so)
+ */
 function tp_validate_image($file) {
-    
-    tp_debug_log("Step 1: Checking file dimensions and attributes of uploaded image.");
+
+    tp_debug_log("Step 1: Validating uploaded image.");
 
     return $file;
-}
-add_filter('wp_handle_upload_prefilter', 'tp_validate_image');
 
-// 2. Replaces special characters in file names when uploading.
+}
+
+/**
+ * Sanitize uploaded image.
+ * 
+ * - sanitize filename (remove swedish letters etc)
+ */
 function tp_sanitize_file_name($filename) {
 
     tp_debug_log("Step 2: Sanitizing filename of uploaded image.");
@@ -182,23 +191,25 @@ function tp_sanitize_file_name($filename) {
         '%20' => '-',
         '_' => '-',
     );
+
     $sanitized_filename = str_replace(array_keys($invalid), array_values($invalid), $sanitized_filename);
     $sanitized_filename = preg_replace('/[^A-Za-z0-9-\. ]/', '', $sanitized_filename); // Remove all non-alphanumeric except .
     $sanitized_filename = preg_replace('/\.(?=.*\.)/', '', $sanitized_filename); // Remove all but last .
     $sanitized_filename = preg_replace('/-+/', '-', $sanitized_filename); // Replace any more than one - in a row
     $sanitized_filename = str_replace('-.', '.', $sanitized_filename); // Remove last - if at the end
     $sanitized_filename = strtolower($sanitized_filename); // Lowercase
+
     return $sanitized_filename;
 }
-add_filter('sanitize_file_name', 'tp_sanitize_file_name', 10, 1);
 
-add_filter( 'big_image_size_threshold', '__return_false' ); // doesn't compress images over 2560px
-//add_filter('jpeg_quality', function($arg){return 100;}); // returns image at 100% jpeg quality
-
-// 3. Check the file type and do conversions (eg. CMYK -> RGB)
+/**
+ * Check filetype of uploaded image and do conversions if neccessary.
+ * 
+ * - convert from CMYK to RGB.
+ */
 function tp_resize_uploaded($image_data) {
 
-    tp_debug_log("Step 3: Do image conversions if neccessary.");
+    tp_debug_log("Step 3: Check filetype of uploaded image.");
 
     $image = getimagesize($image_data['file']);
 
@@ -218,20 +229,21 @@ function tp_resize_uploaded($image_data) {
 
     return $image_data;
 }
-add_action('wp_handle_upload', 'tp_resize_uploaded');
 
-// 4. Sharpen images and remove exif and metadata on upload
+/**
+ * Sharpen image and remove exif and metadata on upload.
+ */
 function tp_sharpen_resized_files($resized_file) {
 	
-    tp_debug_log("Step 4: Sharpen images and remove exif and metadata on uploaded image.");
-
-    tp_debug_log("Start sharpening for file: " . $resized_file);
+    tp_debug_log("Step 4: Sharpen image and remove exif and metadata on upload.");
 
 	$image = new Imagick($resized_file);
-	$size = @getimagesize($resized_file);
+    $size = @getimagesize($resized_file);
+    
 	if (!$size) {
         return new WP_Error('invalid_image', __('Could not read image size.'), $file);
     }
+    
     list($orig_w,$orig_h,$orig_type) = $size;
 
     $max_width  = get_option('bi_better_images_width')==0 ? false : get_option('bi_better_images_width');
@@ -264,12 +276,16 @@ function tp_sharpen_resized_files($resized_file) {
 	
 	return $resized_file;
 }
-add_filter('image_make_intermediate_size', 'tp_sharpen_resized_files', 900);
 
-// 5. If neccessary, downsize the original image now and compress it.
+/**
+ * Post processing of the uploaded image.
+ * 
+ * - if neccessary, downsize the original image
+ * - compress the uploaded image
+ */
 function tp_finialize_upload($image_data) {
 
-    tp_debug_log("Step 5: Do image downsizing and add final compression of image.");
+    tp_debug_log("Step 5: Post processing of the uploaded image.");
 
     // Find the path to the uploaded image.
     $upload_dir = wp_upload_dir();
@@ -277,9 +293,11 @@ function tp_finialize_upload($image_data) {
 
     $image = new Imagick($uploaded_image_location); 
     $size = @getimagesize($uploaded_image_location);
+
     if (!$size) {
         return new WP_Error('invalid_image', __('Could not read image size.'), $file);
     }
+
     list($orig_w,$orig_h,$orig_type) = $size;
 
     $max_width  = get_option('bi_better_images_width')==0 ? false : get_option('bi_better_images_width');
@@ -294,7 +312,7 @@ function tp_finialize_upload($image_data) {
 
         tp_debug_log('Image downsized. New image width: ' . $image->getImageWidth() . '. New image height: ' . $image->getImageHeight() . '.');
     } else {
-        tp_debug_log("--no-resizing-needed");
+        tp_debug_log("No resizing of image was needed. Skipping.");
     }
 
     // We only want to use our sharpening on JPG files
@@ -320,18 +338,17 @@ function tp_finialize_upload($image_data) {
 
     return $image_data;
 }
-add_filter('wp_generate_attachment_metadata', 'tp_finialize_upload');
 
 /**
 * Simple debug logging function. Will only output to the log file
 * if 'debugging' is turned on.
 */
 function tp_debug_log($message) {
-  global $DEBUG_LOGGER;
+    global $DEBUG_LOGGER;
 
-  if($DEBUG_LOGGER) {
-    error_log(print_r($message, true));
-  }
+    if ($DEBUG_LOGGER) {
+        error_log(print_r($message, true));
+    }
 }
 
 /**
