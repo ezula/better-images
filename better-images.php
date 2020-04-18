@@ -165,29 +165,7 @@ function tp_validate_image($file) {
     
     tp_debug_log("Step 1: Checking file dimensions and attributes of uploaded image.");
 
-    $image = getimagesize($file['tmp_name']);
-    $maximum = array(
-        'width' => '6000',
-        'height' => '6000'
-    );
-    $image_width = $image[0];
-    $image_height = $image[1];
-
-    $too_large = "Bilden har för hög upplösning. Max tillåten storlek är {$maximum['width']} x {$maximum['height']} pixlar. Den uppladdade bilden är $image_width x $image_height pixlar. Minska ner bilden på din dator innan du laddar upp den eller kontakta vår support på info@webbson.se eller 010-33 00 580 för att få hjälp med detta.";
-    
-    $cmyk = "Bilden du försöker att ladda upp använder CMYK vilket är en färgmodell som lämpar sig bäst för tryck. Konvertera bilden till RGB och prova att ladda upp den igen. Du är också välkommen att kontakta vår support på info@webbson.se eller 010-33 00 580 för att få hjälp med detta.";
-
-    if ($image_width > $maximum['width'] || $image_height > $maximum['height']) {
-        //add in the field 'error' of the $file array the message
-        $file['error'] = $too_large;
-        return $file;
-    } else if (array_key_exists('channels', $image) && $image['channels'] === 4) {
-        //add in the field 'error' of the $file array the message
-        $file['error'] = $cmyk;
-        return $file;
-    } else {
-        return $file;
-    }
+    return $file;
 }
 add_filter('wp_handle_upload_prefilter', 'tp_validate_image');
 
@@ -217,12 +195,26 @@ add_filter('sanitize_file_name', 'tp_sanitize_file_name', 10, 1);
 add_filter( 'big_image_size_threshold', '__return_false' ); // doesn't compress images over 2560px
 //add_filter('jpeg_quality', function($arg){return 100;}); // returns image at 100% jpeg quality
 
-// 3. Check the file type and convert PNG/CMYK etc to JPG.
+// 3. Check the file type and do conversions (eg. CMYK -> RGB)
 function tp_resize_uploaded($image_data) {
 
-    tp_debug_log("Step 3: Convert images to JPG if neccessary (not active)");
+    tp_debug_log("Step 3: Do image conversions if neccessary.");
 
-    // implement conversion of different file formats to JPG here ...
+    $image = getimagesize($image_data['file']);
+
+    // Check if image is CMYK and attempt to convert to RGB.
+    if (array_key_exists('channels', $image) && $image['channels'] === 4) {
+        tp_debug_log("Image is CMYK, attempting to convert to RGB.");
+
+        $image = new Imagick($image_data['file']);
+        $image = imagick_transform_cmyk_to_rgb($image);
+        
+        // Write the final image to disk.
+        $image->writeImage($image_data['file']);
+
+	    // Remove the JPG from memory
+	    $image->destroy();
+    }
 
     return $image_data;
 }
@@ -384,5 +376,16 @@ function imagick_strip_exif($image) {
         tp_debug_log("Warning: No color profile found on image.");
     }
 
+    return $image;
+}
+
+/**
+ * Transform the image colorspace from CMYK to RGB.
+ * 
+ * @param Imagick $image The imagick image.
+ * @return Imagick The sharpened image.
+ */
+function imagick_transform_cmyk_to_rgb($image) {
+    $image->transformImageColorspace(Imagick::COLORSPACE_SRGB);
     return $image;
 }
