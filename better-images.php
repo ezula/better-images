@@ -39,14 +39,13 @@ add_action('wp_handle_upload', 'tp_resize_uploaded');
 */
 function bi_better_images_options_page() {
     global $bi_settings_page;
-	if(function_exists('add_options_page')){
+	if (function_exists('add_options_page')) {
       $bi_settings_page = add_options_page(
 			'Better Images',
 			'Better Images',
 			'manage_options',
 			'better-images',
-			'bi_better_images_options'
-		);
+			'bi_better_images_options');
 	}
 }
 
@@ -63,24 +62,24 @@ function bi_better_images_options() {
             wp_die("Not authorized");
         }
   
-        $max_width   = intval($_POST['maxwidth']);
-        $max_height  = intval($_POST['maxheight']);
-        $compression_level    = intval($_POST['quality']);
+        $max_width = intval($_POST['maxwidth']);
+        $max_height = intval($_POST['maxheight']);
+        $compression_level = intval($_POST['quality']);
   
         $max_width = ($max_width == '') ? 0 : $max_width;
         $max_width = (ctype_digit(strval($max_width)) == false) ? get_option('bi_better_images_width') : $max_width;
-        update_option('bi_better_images_width',$max_width);
+        update_option('bi_better_images_width', $max_width);
     
         $max_height = ($max_height == '') ? 0 : $max_height;
         $max_height = (ctype_digit(strval($max_height)) == false) ? get_option('bi_better_images_height') : $max_height;
-        update_option('bi_better_images_height',$max_height);
+        update_option('bi_better_images_height', $max_height);
     
         $compression_level = ($compression_level == '') ? 1 : $compression_level;
         $compression_level = (ctype_digit(strval($compression_level)) == false) ? get_option('bi_better_images_quality') : $compression_level;
     
-        if($compression_level < 1) {
+        if ($compression_level < 1) {
             $compression_level = 1;
-        } else if($compression_level > 100) {
+        } else if ($compression_level > 100) {
             $compression_level = 100;
         }
     
@@ -88,9 +87,9 @@ function bi_better_images_options() {
         echo('<div id="message" class="updated fade"><p><strong>Options have been updated.</strong></p></div>');
     }
   
-    $compression_level  = intval(get_option('bi_better_images_quality'));
-    $max_width     = get_option('bi_better_images_width');
-    $max_height    = get_option('bi_better_images_height');
+    $compression_level = intval(get_option('bi_better_images_quality'));
+    $max_width = get_option('bi_better_images_width');
+    $max_height = get_option('bi_better_images_height');
 
   ?>
 
@@ -100,8 +99,8 @@ function bi_better_images_options() {
   
           <h1>Better Images</h1>
   
-          <hr style="margin-top:20px; margin-bottom:0;">
-          <hr style="margin-top:1px; margin-bottom:40px;">
+          <hr style="margin-top:20px; margin-bottom:5;">
+          <hr style="margin-top:5px; margin-bottom:30px;">
   
           <h3>Re-sizing options</h3>
           <table class="form-table">
@@ -110,13 +109,19 @@ function bi_better_images_options() {
                   <th scope="row">Max image dimensions</th>
   
                   <td>
-                      <fieldset><legend class="screen-reader-text"><span>Maximum width and height</span></legend>
-                          <label for="maxwidth">Max width</label>
-                          <input name="maxwidth" step="1" min="0" id="maxwidth" class="small-text" type="number" value="<?php echo $max_width; ?>">
-                          &nbsp;&nbsp;&nbsp;<label for="maxheight">Max height</label>
-                          <input name="maxheight" step="1" min="0" id="maxheight" class="small-text" type="number" value="<?php echo $max_height; ?>">
-                          <p class="description">Set to zero or very high value to prevent resizing in that dimension.
-                          <br />Recommended values: <code>2560</code></p>
+                      <fieldset>
+                        <legend class="screen-reader-text">
+                            <span>Maximum width and height</span>
+                        </legend>
+                        <label for="maxwidth">Max width</label>
+                        <input name="maxwidth" step="1" min="0" id="maxwidth" class="small-text" type="number" value="<?php echo $max_width; ?>">
+                        &nbsp;&nbsp;&nbsp;
+                        <label for="maxheight">Max height</label>
+                        <input name="maxheight" step="1" min="0" id="maxheight" class="small-text" type="number" value="<?php echo $max_height; ?>">
+                        <p class="description">
+                            Set to zero or a very high value to prevent resizing in that dimension.
+                            <br />Recommended values: <code>2560x2560</code>
+                        </p>
                       </fieldset>
                   </td>
   
@@ -170,9 +175,23 @@ function tp_validate_image($file) {
 
     tp_debug_log("Step 1: Validating uploaded image.");
 
-    return $file;
+    $upload_dir = wp_upload_dir();
+    $filename = tp_sanitize_file_name($file['name']);
 
+    if (does_file_exists($filename)) {
+        $file['error'] = "The file you are trying to upload already exists.";
+        tp_debug_log("File already exists, aborting upload.");
+    }
+
+    return $file;
 }
+
+function does_file_exists($filename) {
+    global $wpdb;
+
+    return intval( $wpdb->get_var( "SELECT post_id FROM {$wpdb->postmeta} 
+        WHERE meta_key = '_wp_attached_file' AND meta_value LIKE '%$filename'" ) );
+  }
 
 /**
  * Sanitize uploaded image.
@@ -248,12 +267,6 @@ function tp_sharpen_resized_files($resized_file) {
 
     $max_width  = get_option('bi_better_images_width')==0 ? false : get_option('bi_better_images_width');
     $max_height = get_option('bi_better_images_height')==0 ? false : get_option('bi_better_images_height');
-    
-    // We do not want to process the original image.
-    // if ($orig_w == $max_width || $orig_h == $max_height) {
-    //     tp_debug_log("No action, this is the orig file.");
-    //     return $resized_file;
-    // }
 
 	// We only want to use our sharpening on JPG files
     switch($orig_type) {
@@ -289,7 +302,7 @@ function tp_finialize_upload($image_data) {
 
     // Find the path to the uploaded image.
     $upload_dir = wp_upload_dir();
-    $uploaded_image_location = $upload_dir['basedir'] . '/' .$image_data['file'];
+    $uploaded_image_location = $upload_dir['basedir'] . DIRECTORY_SEPARATOR .$image_data['file'];
 
     $image = new Imagick($uploaded_image_location); 
     $size = @getimagesize($uploaded_image_location);
@@ -318,7 +331,6 @@ function tp_finialize_upload($image_data) {
     // We only want to use our sharpening on JPG files
     switch($orig_type) {
         case IMAGETYPE_JPEG:
-        
             $image = imagick_sharpen_image($image);
             break;
         default:
@@ -340,8 +352,7 @@ function tp_finialize_upload($image_data) {
 }
 
 /**
-* Simple debug logging function. Will only output to the log file
-* if 'debugging' is turned on.
+* Debug logging function.
 */
 function tp_debug_log($message) {
     global $DEBUG_LOGGER;
@@ -364,7 +375,7 @@ function imagick_sharpen_image($image) {
     // Sharpen the image (the default is via the Lanczos algorithm)
     $image->unsharpMaskImage(0, 0.6, 1.4, 0);
 
-    // Store the JPG file, with as default a compression quality of 92 (default WordPress = 90, default ImageMagick = 85...)
+    // Store the JPG file with the compression level specified by the user (or default).
     $image->setImageFormat("jpg");
     $image->setImageCompression(Imagick::COMPRESSION_JPEG);
     $image->setImageCompressionQuality($compression_level);
