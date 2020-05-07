@@ -230,6 +230,12 @@ function tp_resize_uploaded($image_data) {
 
     tp_debug_log("Step 3: Check filetype of uploaded image.");
 
+    if (array_key_exists('type', $image_data) && ($image_data['type'] !=
+        'image/jpeg' && $image_data['type'] != 'image/png')) {
+            tp_debug_log("Not a supported image format or no image, skipping. Type: " . $image_data['type']);
+            return $image_data;
+    }
+
     $image = getimagesize($image_data['file']);
 
     // Check if image is CMYK and attempt to convert to RGB.
@@ -299,6 +305,13 @@ function tp_sharpen_resized_files($resized_file) {
 function tp_finialize_upload($image_data) {
 
     tp_debug_log("Step 5: Post processing of the uploaded image.");
+
+    if (!array_key_exists('file', $image_data)) {
+
+        // If the media type is not an image we don't do this step.
+
+        return $image_data;
+    }
 
     // Find the path to the uploaded image.
     $upload_dir = wp_upload_dir();
