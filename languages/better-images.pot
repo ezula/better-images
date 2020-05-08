@@ -1,0 +1,100 @@
+# Copyright (C) 2020 Webbson AB
+# This file is distributed under the same license as the Better Images plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Better Images 0.0.2\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/better-images\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2020-05-08T20:10:29+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.4.0\n"
+"X-Domain: better-images\n"
+
+#. Plugin Name of the plugin
+msgid "Better Images"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://betterimages.se"
+msgstr ""
+
+#. Description of the plugin
+msgid "A wordpress plugin for better images."
+msgstr ""
+
+#. Author of the plugin
+msgid "Webbson AB"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://webbson.se"
+msgstr ""
+
+#: better-images.php:115
+msgid "Re-sizing options"
+msgstr ""
+
+#: better-images.php:119
+msgid "Max image dimensions"
+msgstr ""
+
+#: better-images.php:124
+msgid "Maximum width and height"
+msgstr ""
+
+#: better-images.php:126
+msgid "Max width"
+msgstr ""
+
+#: better-images.php:129
+msgid "Max height"
+msgstr ""
+
+#: better-images.php:132
+msgid "Set to zero or a very high value to prevent resizing in that dimension."
+msgstr ""
+
+#: better-images.php:133
+msgid "Recommended values: "
+msgstr ""
+
+#: better-images.php:145
+msgid "Compression options"
+msgstr ""
+
+#: better-images.php:146
+msgid "The following settings will only apply to uploaded JPEG images and images converted to JPEG format."
+msgstr ""
+
+#: better-images.php:151
+msgid "JPEG compression level"
+msgstr ""
+
+#: better-images.php:158
+msgid " = low quality (smallest files)"
+msgstr ""
+
+#: better-images.php:159
+msgid " = best quality (largest files)"
+msgstr ""
+
+#: better-images.php:160
+msgid "Recommended value: "
+msgstr ""
+
+#: better-images.php:170
+msgid "Update Options"
+msgstr ""
+
+#: better-images.php:192
+msgid "The file you are trying to upload already exists."
+msgstr ""
+
+#: better-images.php:273
+#: better-images.php:321
+msgid "Could not read image size."
+msgstr ""
