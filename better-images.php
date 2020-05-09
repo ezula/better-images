@@ -4,6 +4,8 @@ Plugin Name: Better Images
 Plugin URI: https://betterimages.se
 Description: A wordpress plugin for better images.
 Version: 0.0.2
+Text Domain: better-images
+Domain Path: /languages
 Author: Webbson AB
 Author URI: https://webbson.se
 License: GPLv2
@@ -33,6 +35,14 @@ add_filter('image_make_intermediate_size', 'tp_sharpen_resized_files', 900);
 add_filter('wp_generate_attachment_metadata', 'tp_finialize_upload');
 
 add_action('wp_handle_upload', 'tp_resize_uploaded');
+add_action( 'plugins_loaded', 'better_images_load_plugin_textdomain' );
+
+/**
+ * Load text domain failes.
+ */
+function better_images_load_plugin_textdomain() {
+    load_plugin_textdomain( 'better-images', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
+}
 
 /**
 * Add the options page.
@@ -102,25 +112,25 @@ function bi_better_images_options() {
           <hr style="margin-top:20px; margin-bottom:5;">
           <hr style="margin-top:5px; margin-bottom:30px;">
   
-          <h3>Re-sizing options</h3>
+          <h3><?php _e('Re-sizing options', 'better-images'); ?></h3>
           <table class="form-table">
   
               <tr>
-                  <th scope="row">Max image dimensions</th>
+                  <th scope="row"><?php _e('Max image dimensions', 'better-images'); ?></th>
   
                   <td>
                       <fieldset>
                         <legend class="screen-reader-text">
-                            <span>Maximum width and height</span>
+                            <span><?php _e('Maximum width and height', 'better-images'); ?></span>
                         </legend>
-                        <label for="maxwidth">Max width</label>
+                        <label for="maxwidth"><?php _e('Max width', 'better-images'); ?></label>
                         <input name="maxwidth" step="1" min="0" id="maxwidth" class="small-text" type="number" value="<?php echo $max_width; ?>">
                         &nbsp;&nbsp;&nbsp;
-                        <label for="maxheight">Max height</label>
+                        <label for="maxheight"><?php _e('Max height', 'better-images'); ?></label>
                         <input name="maxheight" step="1" min="0" id="maxheight" class="small-text" type="number" value="<?php echo $max_height; ?>">
                         <p class="description">
-                            Set to zero or a very high value to prevent resizing in that dimension.
-                            <br />Recommended values: <code>2560x2560</code>
+                            <?php _e('Set to zero or a very high value to prevent resizing in that dimension.', 'better-images'); ?>
+                            <br /><?php _e('Recommended values: ', 'better-images'); ?><code>2560x2560</code>
                         </p>
                       </fieldset>
                   </td>
@@ -132,22 +142,22 @@ function bi_better_images_options() {
   
           <hr style="margin-top:20px; margin-bottom:30px;">
   
-          <h3>Compression options</h3>
-          <p style="max-width:700px">The following settings will only apply to uploaded JPEG images and images converted to JPEG format.</p>
+          <h3><?php _e('Compression options', 'better-images'); ?></h3>
+          <p style="max-width:700px"><?php _e('The following settings will only apply to uploaded JPEG images and images converted to JPEG format.', 'better-images'); ?></p>
   
           <table class="form-table">
   
               <tr>
-                  <th scope="row">JPEG compression level</th>
+                  <th scope="row"><?php _e('JPEG compression level', 'better-images'); ?></th>
                   <td valign="top">
                       <select id="quality" name="quality">
                       <?php for($i=1; $i<=100; $i++) : ?>
                           <option value="<?php echo $i; ?>" <?php if($compression_level == $i) : ?>selected<?php endif; ?>><?php echo $i; ?></option>
                       <?php endfor; ?>
                       </select>
-                      <p class="description"><code>1</code> = low quality (smallest files)
-                      <br><code>100</code> = best quality (largest files)
-                      <br>Recommended value: <code>75</code></p>
+                      <p class="description"><code>1</code><?php _e(' = low quality (smallest files)', 'better-images'); ?>
+                      <br><code>100</code><?php _e(' = best quality (largest files)', 'better-images'); ?>
+                      <br><?php _e('Recommended value: ', 'better-images'); ?><code>75</code></p>
                   </td>
               </tr>
   
@@ -157,7 +167,7 @@ function bi_better_images_options() {
           <p class="submit" style="margin-top:10px;border-top:1px solid #eee;padding-top:20px;">
             <input type="hidden" name="action" value="update" />
             <?php wp_nonce_field('bi-options-update'); ?>
-            <input id="submit" name="bi-options-update" class="button button-primary" type="submit" value="Update Options">
+            <input id="submit" name="bi-options-update" class="button button-primary" type="submit" value="<?php _e('Update Options', 'better-images'); ?>">
           </p>
       </form>
   
@@ -179,7 +189,7 @@ function tp_validate_image($file) {
     $filename = tp_sanitize_file_name($file['name']);
 
     if (does_file_exists($filename)) {
-        $file['error'] = "The file you are trying to upload already exists.";
+        $file['error'] = __('The file you are trying to upload already exists.', 'better-images');
         tp_debug_log("File already exists, aborting upload.");
     }
 
@@ -266,7 +276,7 @@ function tp_sharpen_resized_files($resized_file) {
     $size = @getimagesize($resized_file);
     
 	if (!$size) {
-        return new WP_Error('invalid_image', __('Could not read image size.'), $file);
+        return new WP_Error('invalid_image', __('Could not read image size.', 'better-images'), $file);
     }
     
     list($orig_w,$orig_h,$orig_type) = $size;
@@ -321,7 +331,7 @@ function tp_finialize_upload($image_data) {
     $size = @getimagesize($uploaded_image_location);
 
     if (!$size) {
-        return new WP_Error('invalid_image', __('Could not read image size.'), $file);
+        return new WP_Error('invalid_image', __('Could not read image size.', 'better-images'), $file);
     }
 
     list($orig_w,$orig_h,$orig_type) = $size;
