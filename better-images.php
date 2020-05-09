@@ -17,10 +17,10 @@ $PLUGIN_VERSION = '0.0.2';
 // Default plugin values
 if (get_option('bi_better_images_version') != $PLUGIN_VERSION) {
 
-    add_option('bi_better_images_version', 			$PLUGIN_VERSION, '','yes');
-    add_option('bi_better_images_width', 				'2560', '', 'yes');
-    add_option('bi_better_images_height',				'2560', '', 'yes');
-    add_option('bi_better_images_quality',				'75', '', 'yes');
+    add_option('bi_better_images_version', $PLUGIN_VERSION, '','yes');
+    add_option('bi_better_images_quality', '75', '', 'yes');
+    add_option('bi_better_images_resize_image', 'yes', '','yes');
+    add_option('bi_better_images_resize_threshold', '2560', '', 'yes');
 }
 
 // Hook in the options page
@@ -30,18 +30,32 @@ add_action('admin_menu', 'bi_better_images_options_page');
 
 add_filter('wp_handle_upload_prefilter', 'tp_validate_image');
 add_filter('sanitize_file_name', 'tp_sanitize_file_name', 10, 1);
-add_filter( 'big_image_size_threshold', '__return_false' );
+add_filter('big_image_size_threshold', 'tp_big_image_size_threshold');
 add_filter('image_make_intermediate_size', 'tp_sharpen_resized_files', 900);
 add_filter('wp_generate_attachment_metadata', 'tp_finialize_upload');
 
 add_action('wp_handle_upload', 'tp_resize_uploaded');
-add_action( 'plugins_loaded', 'better_images_load_plugin_textdomain' );
+add_action('plugins_loaded', 'better_images_load_plugin_textdomain');
 
 /**
  * Load text domain failes.
  */
 function better_images_load_plugin_textdomain() {
     load_plugin_textdomain( 'better-images', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
+}
+
+/**
+ * We leave the threshold off when re-sizing is enabled,
+ * otherwise we set it to default setting.
+ */
+function tp_big_image_size_threshold($threshold) {
+    $resizing_enabled = (get_option('bi_better_images_resize_image') == 'yes') ? true : false;
+
+    if ($resizing_enabled) {
+        return false;
+    }
+
+    return 2560;
 }
 
 /**
@@ -72,17 +86,8 @@ function bi_better_images_options() {
             wp_die("Not authorized");
         }
   
-        $max_width = intval($_POST['maxwidth']);
-        $max_height = intval($_POST['maxheight']);
+        $resizing_enabled = ($_POST['yesno'] == 'yes' ? 'yes' : 'no');
         $compression_level = intval($_POST['quality']);
-  
-        $max_width = ($max_width == '') ? 0 : $max_width;
-        $max_width = (ctype_digit(strval($max_width)) == false) ? get_option('bi_better_images_width') : $max_width;
-        update_option('bi_better_images_width', $max_width);
-    
-        $max_height = ($max_height == '') ? 0 : $max_height;
-        $max_height = (ctype_digit(strval($max_height)) == false) ? get_option('bi_better_images_height') : $max_height;
-        update_option('bi_better_images_height', $max_height);
     
         $compression_level = ($compression_level == '') ? 1 : $compression_level;
         $compression_level = (ctype_digit(strval($compression_level)) == false) ? get_option('bi_better_images_quality') : $compression_level;
@@ -92,83 +97,76 @@ function bi_better_images_options() {
         } else if ($compression_level > 100) {
             $compression_level = 100;
         }
+
+        if ($resizing_enabled == 'yes') {
+            update_option('bi_better_images_resize_image','yes');
+        } else {
+            update_option('bi_better_images_resize_image','no');
+        }
     
         update_option('bi_better_images_quality', $compression_level);
         echo('<div id="message" class="updated fade"><p><strong>Options have been updated.</strong></p></div>');
     }
   
     $compression_level = intval(get_option('bi_better_images_quality'));
-    $max_width = get_option('bi_better_images_width');
-    $max_height = get_option('bi_better_images_height');
-
+    $resizing_enabled = get_option('bi_better_images_resize_image');
   ?>
 
   
   <div class="wrap">
-      <form method="post" accept-charset="utf-8">
+        <form method="post" accept-charset="utf-8">
+
+            <h1>Better Images</h1>
+
+            <hr style="margin-top:20px; margin-bottom:5px;">
+            <hr style="margin-top:5px; margin-bottom:30px;">
+
+            <h3><?php _e('Re-sizing options', 'better-images'); ?></h3>
+            <table class="form-table">
+                <tr>
+                    <th scope="row"><?php _e('Enable re-sizing of large images', 'better-images'); ?></th>
+                    <td valign="top">
+                        <select name="yesno" id="yesno">
+                            <option value="no" label="no" <?php echo ($resizing_enabled == 'no') ? 'selected="selected"' : ''; ?>>
+                                <?php _e('NO', 'better-images'); ?>
+                            </option>
+                            <option value="yes" label="yes" <?php echo ($resizing_enabled == 'yes') ? 'selected="selected"' : ''; ?>>
+                                <?php _e('YES', 'better-images'); ?>
+                            </option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+    
+            <hr style="margin-top:20px; margin-bottom:30px;">
+    
+            <h3><?php _e('Compression options', 'better-images'); ?></h3>
+            <p style="max-width:700px"><?php _e('The following settings will only apply to uploaded JPEG images and images converted to JPEG format.', 'better-images'); ?></p>
+    
+            <table class="form-table">
   
-          <h1>Better Images</h1>
+                <tr>
+                    <th scope="row"><?php _e('JPEG compression level', 'better-images'); ?></th>
+                    <td valign="top">
+                        <select id="quality" name="quality">
+                        <?php for($i=1; $i<=100; $i++) : ?>
+                            <option value="<?php echo $i; ?>" <?php if($compression_level == $i) : ?>selected<?php endif; ?>><?php echo $i; ?></option>
+                        <?php endfor; ?>
+                        </select>
+                        <p class="description"><code>1</code><?php _e(' = low quality (smallest files)', 'better-images'); ?>
+                        <br><code>100</code><?php _e(' = best quality (largest files)', 'better-images'); ?>
+                        <br><?php _e('Recommended value: ', 'better-images'); ?><code>75</code></p>
+                    </td>
+                </tr>
   
-          <hr style="margin-top:20px; margin-bottom:5;">
-          <hr style="margin-top:5px; margin-bottom:30px;">
-  
-          <h3><?php _e('Re-sizing options', 'better-images'); ?></h3>
-          <table class="form-table">
-  
-              <tr>
-                  <th scope="row"><?php _e('Max image dimensions', 'better-images'); ?></th>
-  
-                  <td>
-                      <fieldset>
-                        <legend class="screen-reader-text">
-                            <span><?php _e('Maximum width and height', 'better-images'); ?></span>
-                        </legend>
-                        <label for="maxwidth"><?php _e('Max width', 'better-images'); ?></label>
-                        <input name="maxwidth" step="1" min="0" id="maxwidth" class="small-text" type="number" value="<?php echo $max_width; ?>">
-                        &nbsp;&nbsp;&nbsp;
-                        <label for="maxheight"><?php _e('Max height', 'better-images'); ?></label>
-                        <input name="maxheight" step="1" min="0" id="maxheight" class="small-text" type="number" value="<?php echo $max_height; ?>">
-                        <p class="description">
-                            <?php _e('Set to zero or a very high value to prevent resizing in that dimension.', 'better-images'); ?>
-                            <br /><?php _e('Recommended values: ', 'better-images'); ?><code>2560x2560</code>
-                        </p>
-                      </fieldset>
-                  </td>
-  
-  
-              </tr>
-  
-          </table>
-  
-          <hr style="margin-top:20px; margin-bottom:30px;">
-  
-          <h3><?php _e('Compression options', 'better-images'); ?></h3>
-          <p style="max-width:700px"><?php _e('The following settings will only apply to uploaded JPEG images and images converted to JPEG format.', 'better-images'); ?></p>
-  
-          <table class="form-table">
-  
-              <tr>
-                  <th scope="row"><?php _e('JPEG compression level', 'better-images'); ?></th>
-                  <td valign="top">
-                      <select id="quality" name="quality">
-                      <?php for($i=1; $i<=100; $i++) : ?>
-                          <option value="<?php echo $i; ?>" <?php if($compression_level == $i) : ?>selected<?php endif; ?>><?php echo $i; ?></option>
-                      <?php endfor; ?>
-                      </select>
-                      <p class="description"><code>1</code><?php _e(' = low quality (smallest files)', 'better-images'); ?>
-                      <br><code>100</code><?php _e(' = best quality (largest files)', 'better-images'); ?>
-                      <br><?php _e('Recommended value: ', 'better-images'); ?><code>75</code></p>
-                  </td>
-              </tr>
-  
-          </table>
+            </table>
   
   
-          <p class="submit" style="margin-top:10px;border-top:1px solid #eee;padding-top:20px;">
-            <input type="hidden" name="action" value="update" />
-            <?php wp_nonce_field('bi-options-update'); ?>
-            <input id="submit" name="bi-options-update" class="button button-primary" type="submit" value="<?php _e('Update Options', 'better-images'); ?>">
-          </p>
+            <p class="submit" style="margin-top:10px;border-top:1px solid #eee;padding-top:20px;">
+                <input type="hidden" name="action" value="update" />
+                <?php wp_nonce_field('bi-options-update'); ?>
+                <input id="submit" name="bi-options-update" class="button button-primary" type="submit" value="<?php _e('Update Options', 'better-images'); ?>">
+            </p>
       </form>
   
   </div>
@@ -319,7 +317,6 @@ function tp_finialize_upload($image_data) {
     if (!array_key_exists('file', $image_data)) {
 
         // If the media type is not an image we don't do this step.
-
         return $image_data;
     }
 
@@ -336,11 +333,11 @@ function tp_finialize_upload($image_data) {
 
     list($orig_w,$orig_h,$orig_type) = $size;
 
-    $max_width  = get_option('bi_better_images_width')==0 ? false : get_option('bi_better_images_width');
-    $max_height = get_option('bi_better_images_height')==0 ? false : get_option('bi_better_images_height');
+    $max_size = get_option('bi_better_images_resize_threshold') == 0 ? 0 : get_option('bi_better_images_resize_threshold');
+    $resizing_enabled = (get_option('bi_better_images_resize_image') == 'yes') ? true : false;
 
-    if ($orig_w > $max_width || $orig_h > $max_height) {
-        $image->resizeImage($max_width, $max_height, Imagick::FILTER_LANCZOS, 1, true);
+    if (($orig_w > $max_size || $orig_h > $max_size) && $resizing_enabled) {
+        $image->resizeImage($max_size, $max_size, Imagick::FILTER_LANCZOS, 1, true);
 
         // set new image dimensions to wp
         $image_data['width'] = $image->getImageWidth();
@@ -348,7 +345,7 @@ function tp_finialize_upload($image_data) {
 
         tp_debug_log('Image downsized. New image width: ' . $image->getImageWidth() . '. New image height: ' . $image->getImageHeight() . '.');
     } else {
-        tp_debug_log("No resizing of image was needed. Skipping.");
+        tp_debug_log("No resizing of image was needed or re-sizing not enabled. Skipping.");
     }
 
     // We only want to use our sharpening on JPG files
