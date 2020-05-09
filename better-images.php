@@ -18,9 +18,14 @@ $PLUGIN_VERSION = '0.0.2';
 if (get_option('bi_better_images_version') != $PLUGIN_VERSION) {
 
     add_option('bi_better_images_version', $PLUGIN_VERSION, '','yes');
-    add_option('bi_better_images_quality', '75', '', 'yes');
-    add_option('bi_better_images_resize_image', 'yes', '','yes');
     add_option('bi_better_images_resize_threshold', '2560', '', 'yes');
+
+    add_option('bi_better_images_quality', '75', '', 'yes');
+    add_option('bi_better_images_resize_image', 'yes', '', 'yes');
+    add_option('bi_better_images_sharpen_image', 'yes', '', 'yes');
+    add_option('bi_better_images_remove_exif', 'yes', '', 'yes');
+    add_option('bi_better_images_convert_png', 'yes', '', 'yes');
+    add_option('bi_better_images_convert_cmyk', 'yes', '', 'yes');
 }
 
 // Hook in the options page
@@ -34,7 +39,7 @@ add_filter('big_image_size_threshold', 'tp_big_image_size_threshold');
 add_filter('image_make_intermediate_size', 'tp_sharpen_resized_files', 900);
 add_filter('wp_generate_attachment_metadata', 'tp_finialize_upload');
 
-add_action('wp_handle_upload', 'tp_resize_uploaded');
+add_action('wp_handle_upload', 'tp_handle_uploaded');
 add_action('plugins_loaded', 'better_images_load_plugin_textdomain');
 
 /**
@@ -86,7 +91,12 @@ function bi_better_images_options() {
             wp_die("Not authorized");
         }
   
-        $resizing_enabled = ($_POST['yesno'] == 'yes' ? 'yes' : 'no');
+        $resizing_enabled = ($_POST['resize_yesno'] == 'yes' ? 'yes' : 'no');
+        $sharpen_image_enabled = ($_POST['sharpen_yesno'] == 'yes' ? 'yes' : 'no');
+        $remove_exif_enabled = ($_POST['remove_exif_yesno'] == 'yes' ? 'yes' : 'no');
+        $convert_png_enabled = ($_POST['convert_png_yesno'] == 'yes' ? 'yes' : 'no');
+        $convert_cmyk_enabled = ($_POST['convert_cmyk_yesno'] == 'yes' ? 'yes' : 'no');
+
         $compression_level = intval($_POST['quality']);
     
         $compression_level = ($compression_level == '') ? 1 : $compression_level;
@@ -103,6 +113,30 @@ function bi_better_images_options() {
         } else {
             update_option('bi_better_images_resize_image','no');
         }
+
+        if ($sharpen_image_enabled == 'yes') {
+            update_option('bi_better_images_sharpen_image','yes');
+        } else {
+            update_option('bi_better_images_sharpen_image','no');
+        }
+
+        if ($remove_exif_enabled == 'yes') {
+            update_option('bi_better_images_remove_exif','yes');
+        } else {
+            update_option('bi_better_images_remove_exif','no');
+        }
+
+        if ($convert_png_enabled == 'yes') {
+            update_option('bi_better_images_convert_png','yes');
+        } else {
+            update_option('bi_better_images_convert_png','no');
+        }
+
+        if ($convert_cmyk_enabled == 'yes') {
+            update_option('bi_better_images_convert_cmyk','yes');
+        } else {
+            update_option('bi_better_images_convert_cmyk','no');
+        }
     
         update_option('bi_better_images_quality', $compression_level);
         echo('<div id="message" class="updated fade"><p><strong>Options have been updated.</strong></p></div>');
@@ -110,6 +144,10 @@ function bi_better_images_options() {
   
     $compression_level = intval(get_option('bi_better_images_quality'));
     $resizing_enabled = get_option('bi_better_images_resize_image');
+    $sharpen_image_enabled = get_option('bi_better_images_sharpen_image');
+    $remove_exif_enabled = get_option('bi_better_images_remove_exif');
+    $convert_png_enabled = get_option('bi_better_images_convert_png');
+    $convert_cmyk_enabled = get_option('bi_better_images_convert_cmyk');
   ?>
 
   
@@ -126,11 +164,63 @@ function bi_better_images_options() {
                 <tr>
                     <th scope="row"><?php _e('Enable re-sizing of large images', 'better-images'); ?></th>
                     <td valign="top">
-                        <select name="yesno" id="yesno">
+                        <select name="resize_yesno" id="resize_yesno">
                             <option value="no" label="no" <?php echo ($resizing_enabled == 'no') ? 'selected="selected"' : ''; ?>>
                                 <?php _e('NO', 'better-images'); ?>
                             </option>
                             <option value="yes" label="yes" <?php echo ($resizing_enabled == 'yes') ? 'selected="selected"' : ''; ?>>
+                                <?php _e('YES', 'better-images'); ?>
+                            </option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php _e('Shapen re-sized images', 'better-images'); ?></th>
+                    <td valign="top">
+                        <select name="sharpen_yesno" id="sharpen_yesno">
+                            <option value="no" label="no" <?php echo ($sharpen_image_enabled == 'no') ? 'selected="selected"' : ''; ?>>
+                                <?php _e('NO', 'better-images'); ?>
+                            </option>
+                            <option value="yes" label="yes" <?php echo ($sharpen_image_enabled == 'yes') ? 'selected="selected"' : ''; ?>>
+                                <?php _e('YES', 'better-images'); ?>
+                            </option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php _e('Remove EXIF-information from image', 'better-images'); ?></th>
+                    <td valign="top">
+                        <select name="remove_exif_yesno" id="remove_exif_yesno">
+                            <option value="no" label="no" <?php echo ($remove_exif_enabled == 'no') ? 'selected="selected"' : ''; ?>>
+                                <?php _e('NO', 'better-images'); ?>
+                            </option>
+                            <option value="yes" label="yes" <?php echo ($remove_exif_enabled == 'yes') ? 'selected="selected"' : ''; ?>>
+                                <?php _e('YES', 'better-images'); ?>
+                            </option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php _e('Convert PNG images to JPG', 'better-images'); ?></th>
+                    <td valign="top">
+                        <select name="convert_png_yesno" id="convert_png_yesno">
+                            <option value="no" label="no" <?php echo ($convert_png_enabled == 'no') ? 'selected="selected"' : ''; ?>>
+                                <?php _e('NO', 'better-images'); ?>
+                            </option>
+                            <option value="yes" label="yes" <?php echo ($convert_png_enabled == 'yes') ? 'selected="selected"' : ''; ?>>
+                                <?php _e('YES', 'better-images'); ?>
+                            </option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php _e('Convert CMYK colorspace to RGB', 'better-images'); ?></th>
+                    <td valign="top">
+                        <select name="convert_cmyk_yesno" id="convert_cmyk_yesno">
+                            <option value="no" label="no" <?php echo ($convert_cmyk_enabled == 'no') ? 'selected="selected"' : ''; ?>>
+                                <?php _e('NO', 'better-images'); ?>
+                            </option>
+                            <option value="yes" label="yes" <?php echo ($convert_cmyk_enabled == 'yes') ? 'selected="selected"' : ''; ?>>
                                 <?php _e('YES', 'better-images'); ?>
                             </option>
                         </select>
@@ -234,14 +324,21 @@ function tp_sanitize_file_name($filename) {
  * 
  * - convert from CMYK to RGB.
  */
-function tp_resize_uploaded($image_data) {
+function tp_handle_uploaded($image_data) {
 
     tp_debug_log("Step 3: Check filetype of uploaded image.");
+
+    $convert_cmyk_enabled = (get_option('bi_better_images_convert_cmyk') == 'yes') ? true : false;
 
     if (array_key_exists('type', $image_data) && ($image_data['type'] !=
         'image/jpeg' && $image_data['type'] != 'image/png')) {
             tp_debug_log("Not a supported image format or no image, skipping. Type: " . $image_data['type']);
             return $image_data;
+    }
+
+    if (!$convert_cmyk_enabled) {
+        tp_debug_log("Conversion to CMYK disabled, will not check for CMYK colorspace on image, proceeding.");
+        return $image_data; 
     }
 
     $image = getimagesize($image_data['file']);
@@ -281,19 +378,25 @@ function tp_sharpen_resized_files($resized_file) {
 
     $max_width  = get_option('bi_better_images_width')==0 ? false : get_option('bi_better_images_width');
     $max_height = get_option('bi_better_images_height')==0 ? false : get_option('bi_better_images_height');
+    $remove_exif_enabled = (get_option('bi_better_images_remove_exif') == 'yes') ? true : false;
+    $sharpen_image_enabled = (get_option('bi_better_images_sharpen_image') == 'yes') ? true : false;
 
-	// We only want to use our sharpening on JPG files
-    switch($orig_type) {
-        case IMAGETYPE_JPEG:
-        
-            $image = imagick_sharpen_image($image);
-            break;
-        default:
-            break;
+    if ($sharpen_image_enabled) {
+        // We only want to use our sharpening on JPG files
+        switch($orig_type) {
+            case IMAGETYPE_JPEG:
+            
+                $image = imagick_sharpen_image($image);
+                break;
+            default:
+                break;
+        }
     }
 
-    // Strip the Exif data on the image (keep color profile)
-    $image = imagick_strip_exif($image);
+    if ($remove_exif_enabled) {
+        // Strip the Exif data on the image (keep color profile)
+        $image = imagick_strip_exif($image);
+    }
 
     // Write the final image to disk.
     $image->writeImage($resized_file);
@@ -320,6 +423,11 @@ function tp_finialize_upload($image_data) {
         return $image_data;
     }
 
+    $max_size = get_option('bi_better_images_resize_threshold') == 0 ? 0 : get_option('bi_better_images_resize_threshold');
+    $resizing_enabled = (get_option('bi_better_images_resize_image') == 'yes') ? true : false;
+    $remove_exif_enabled = (get_option('bi_better_images_remove_exif') == 'yes') ? true : false;
+    $sharpen_image_enabled = (get_option('bi_better_images_sharpen_image') == 'yes') ? true : false;
+
     // Find the path to the uploaded image.
     $upload_dir = wp_upload_dir();
     $uploaded_image_location = $upload_dir['basedir'] . DIRECTORY_SEPARATOR .$image_data['file'];
@@ -333,9 +441,6 @@ function tp_finialize_upload($image_data) {
 
     list($orig_w,$orig_h,$orig_type) = $size;
 
-    $max_size = get_option('bi_better_images_resize_threshold') == 0 ? 0 : get_option('bi_better_images_resize_threshold');
-    $resizing_enabled = (get_option('bi_better_images_resize_image') == 'yes') ? true : false;
-
     if (($orig_w > $max_size || $orig_h > $max_size) && $resizing_enabled) {
         $image->resizeImage($max_size, $max_size, Imagick::FILTER_LANCZOS, 1, true);
 
@@ -348,17 +453,21 @@ function tp_finialize_upload($image_data) {
         tp_debug_log("No resizing of image was needed or re-sizing not enabled. Skipping.");
     }
 
-    // We only want to use our sharpening on JPG files
-    switch($orig_type) {
-        case IMAGETYPE_JPEG:
-            $image = imagick_sharpen_image($image);
-            break;
-        default:
-            break;
+    if ($sharpen_image_enabled) {
+        // We only want to use our sharpening on JPG files
+        switch($orig_type) {
+            case IMAGETYPE_JPEG:
+                $image = imagick_sharpen_image($image);
+                break;
+            default:
+                break;
+        }
     }
 
-    // Strip the Exif data on the image (keep color profile)
-    $image = imagick_strip_exif($image);
+    if ($remove_exif_enabled) {
+        // Strip the Exif data on the image (keep color profile)
+        $image = imagick_strip_exif($image);
+    }
 
     // Write the final image to disk.
     $image->writeImage($uploaded_image_location);
@@ -424,6 +533,7 @@ function imagick_strip_exif($image) {
         tp_debug_log("Warning: No color profile found on image.");
     }
 
+    tp_debug_log("Image has been stripped of exif information.");
     return $image;
 }
 

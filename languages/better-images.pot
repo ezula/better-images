@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-05-08T20:10:29+00:00\n"
+"POT-Creation-Date: 2020-05-09T20:24:21+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: better-images\n"
@@ -34,67 +34,79 @@ msgstr ""
 msgid "https://webbson.se"
 msgstr ""
 
-#: better-images.php:115
+#: better-images.php:162
 msgid "Re-sizing options"
 msgstr ""
 
-#: better-images.php:119
-msgid "Max image dimensions"
+#: better-images.php:165
+msgid "Enable re-sizing of large images"
 msgstr ""
 
-#: better-images.php:124
-msgid "Maximum width and height"
+#: better-images.php:169
+#: better-images.php:182
+#: better-images.php:195
+#: better-images.php:208
+#: better-images.php:221
+msgid "NO"
 msgstr ""
 
-#: better-images.php:126
-msgid "Max width"
+#: better-images.php:172
+#: better-images.php:185
+#: better-images.php:198
+#: better-images.php:211
+#: better-images.php:224
+msgid "YES"
 msgstr ""
 
-#: better-images.php:129
-msgid "Max height"
+#: better-images.php:178
+msgid "Shapen re-sized images"
 msgstr ""
 
-#: better-images.php:132
-msgid "Set to zero or a very high value to prevent resizing in that dimension."
+#: better-images.php:191
+msgid "Remove EXIF-information from image"
 msgstr ""
 
-#: better-images.php:133
-msgid "Recommended values: "
+#: better-images.php:204
+msgid "Convert PNG images to JPG"
 msgstr ""
 
-#: better-images.php:145
+#: better-images.php:217
+msgid "Convert CMYK colorspace to RGB"
+msgstr ""
+
+#: better-images.php:233
 msgid "Compression options"
 msgstr ""
 
-#: better-images.php:146
+#: better-images.php:234
 msgid "The following settings will only apply to uploaded JPEG images and images converted to JPEG format."
 msgstr ""
 
-#: better-images.php:151
+#: better-images.php:239
 msgid "JPEG compression level"
 msgstr ""
 
-#: better-images.php:158
+#: better-images.php:246
 msgid " = low quality (smallest files)"
 msgstr ""
 
-#: better-images.php:159
+#: better-images.php:247
 msgid " = best quality (largest files)"
 msgstr ""
 
-#: better-images.php:160
+#: better-images.php:248
 msgid "Recommended value: "
 msgstr ""
 
-#: better-images.php:170
+#: better-images.php:258
 msgid "Update Options"
 msgstr ""
 
-#: better-images.php:192
+#: better-images.php:280
 msgid "The file you are trying to upload already exists."
 msgstr ""
 
-#: better-images.php:273
-#: better-images.php:321
+#: better-images.php:374
+#: better-images.php:439
 msgid "Could not read image size."
 msgstr ""
