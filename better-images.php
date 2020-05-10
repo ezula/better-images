@@ -273,8 +273,16 @@ function tp_validate_image($file) {
 
     tp_debug_log("Step 1: Validating uploaded image.");
 
-    $upload_dir = wp_upload_dir();
+    $convert_png_enabled = (get_option('bi_better_images_convert_png') == 'yes') ? true : false;
+
     $filename = tp_sanitize_file_name($file['name']);
+    $ext = pathinfo($filename, PATHINFO_EXTENSION);
+
+    // If user uploads a PNG and conversion to JPG is enabled, check for an existng file with JPG extension.
+    if ((gettype($ext) == 'string') && (strtoupper($ext) == 'PNG') && $convert_png_enabled) {
+        tp_debug_log("Filetype is PNG. Image will be converted to JPG. Checkif if file with JPG extension exists.");
+        $filename = replace_extension($filename, 'jpg');
+    }
 
     if (does_file_exists($filename)) {
         $file['error'] = __('The file you are trying to upload already exists.', 'better-images');
@@ -284,6 +292,21 @@ function tp_validate_image($file) {
     return $file;
 }
 
+/**
+ * Helper function to replace the file extension of
+ * a file with another one.
+ */
+function replace_extension($filename, $new_extension) {
+    $info = pathinfo($filename);
+    return $info['filename'] . '.' . $new_extension;
+}
+
+/**
+ * Check if a give file exists in the uploads folder or not.
+ * 
+ * @param String $filename The filename to check for.
+ * @return Boolean If file exists, true, otherwise false.
+ */
 function does_file_exists($filename) {
     global $wpdb;
 
@@ -475,8 +498,6 @@ function tp_finialize_upload($image_data) {
     // Remove the JPG from memory
     $image->destroy();
 
-    tp_debug_log($image_data);
-
     return $image_data;
 }
 
@@ -534,6 +555,20 @@ function imagick_strip_exif($image) {
     }
 
     tp_debug_log("Image has been stripped of exif information.");
+    return $image;
+}
+
+/**
+ * Convert a PNG file to a JPG file with ImageMagick.
+ * 
+ * @param Imagick $image The image file.
+ * @return Imagick The converted image.
+ */
+function imagick_convert_png_to_jpg($image) {
+    $image->setImageBackgroundColor('white');
+    $image->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
+    $image->setImageFormat('jpg');
+
     return $image;
 }
 
