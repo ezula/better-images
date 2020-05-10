@@ -276,12 +276,11 @@ function tp_validate_image($file) {
     $convert_png_enabled = (get_option('bi_better_images_convert_png') == 'yes') ? true : false;
 
     $filename = tp_sanitize_file_name($file['name']);
-    $ext = pathinfo($filename, PATHINFO_EXTENSION);
 
     // If user uploads a PNG and conversion to JPG is enabled, check for an existng file with JPG extension.
-    if ((gettype($ext) == 'string') && (strtoupper($ext) == 'PNG') && $convert_png_enabled) {
+    if (file_is_png($filename) && $convert_png_enabled) {
         tp_debug_log("Filetype is PNG. Image will be converted to JPG. Checkif if file with JPG extension exists.");
-        $filename = replace_extension($filename, 'jpg');
+        $filename = replace_extension($filename, 'jpg', false);
     }
 
     if (does_file_exists($filename)) {
@@ -296,9 +295,22 @@ function tp_validate_image($file) {
  * Helper function to replace the file extension of
  * a file with another one.
  */
-function replace_extension($filename, $new_extension) {
+function replace_extension($filename, $new_extension, $include_dir) {
     $info = pathinfo($filename);
+
+    if ($include_dir) {
+        return $info['dirname'] . DIRECTORY_SEPARATOR . $info['filename'] . '.' . $new_extension;
+    }
+
     return $info['filename'] . '.' . $new_extension;
+}
+
+/**
+ * Helper function to check if file is PNG.
+ */
+function file_is_png($filename) {
+    $ext = pathinfo($filename, PATHINFO_EXTENSION);
+    return (gettype($ext) == 'string') && (strtoupper($ext) == 'PNG');
 }
 
 /**
@@ -345,13 +357,15 @@ function tp_sanitize_file_name($filename) {
 /**
  * Check filetype of uploaded image and do conversions if neccessary.
  * 
- * - convert from CMYK to RGB.
+ * - convert from CMYK to RGB (if enabled).
+ * - convert from PNG to JPG (if enabled).
  */
 function tp_handle_uploaded($image_data) {
 
     tp_debug_log("Step 3: Check filetype of uploaded image.");
 
     $convert_cmyk_enabled = (get_option('bi_better_images_convert_cmyk') == 'yes') ? true : false;
+    $convert_png_enabled = (get_option('bi_better_images_convert_png') == 'yes') ? true : false;
 
     if (array_key_exists('type', $image_data) && ($image_data['type'] !=
         'image/jpeg' && $image_data['type'] != 'image/png')) {
@@ -365,19 +379,41 @@ function tp_handle_uploaded($image_data) {
     }
 
     $image = getimagesize($image_data['file']);
+    $is_cmyk = array_key_exists('channels', $image) && $image['channels'] === 4;
 
-    // Check if image is CMYK and attempt to convert to RGB.
-    if (array_key_exists('channels', $image) && $image['channels'] === 4) {
-        tp_debug_log("Image is CMYK, attempting to convert to RGB.");
+    $convert_png = file_is_png($image_data['file']) && $convert_png_enabled;
 
-        $image = new Imagick($image_data['file']);
-        $image = imagick_transform_cmyk_to_rgb($image);
+    // Check if image is CMYK or if we should convert a PNG to JPG.
+    if ($is_cmyk || $convert_png) {
         
+        $image = new Imagick($image_data['file']);
+        $old_png_file = $image_data['file'];
+
+        if ($is_cmyk) {
+            tp_debug_log("Image is CMYK. Attempting to convert colorspace to RGB.");
+            $image = imagick_transform_cmyk_to_rgb($image);
+        }
+
+        if ($convert_png) {
+            tp_debug_log("Image is PNG and conversion to JPG is enabled. Attempting to convert to JPG.");
+            $image = imagick_convert_png_to_jpg($image);
+
+            $image_data['file'] = replace_extension($image_data['file'], 'jpg', true);
+            $image_data['url'] = replace_extension($image_data['url'], 'jpg', true);
+            $image_data['type'] = 'image/jpeg';
+        }
+
+
         // Write the final image to disk.
         $image->writeImage($image_data['file']);
 
 	    // Remove the JPG from memory
-	    $image->destroy();
+        $image->destroy();
+
+        if ($convert_png) {
+            tp_debug_log("Unlinking old PNG file: " . $old_png_file);
+            unlink($old_png_file);
+        }
     }
 
     return $image_data;
@@ -389,6 +425,8 @@ function tp_handle_uploaded($image_data) {
 function tp_sharpen_resized_files($resized_file) {
 	
     tp_debug_log("Step 4: Sharpen image and remove exif and metadata on upload.");
+
+    tp_debug_log($resized_file);
 
 	$image = new Imagick($resized_file);
     $size = @getimagesize($resized_file);
@@ -440,6 +478,8 @@ function tp_finialize_upload($image_data) {
 
     tp_debug_log("Step 5: Post processing of the uploaded image.");
 
+    tp_debug_log($image_data);
+
     if (!array_key_exists('file', $image_data)) {
 
         // If the media type is not an image we don't do this step.
@@ -453,7 +493,7 @@ function tp_finialize_upload($image_data) {
 
     // Find the path to the uploaded image.
     $upload_dir = wp_upload_dir();
-    $uploaded_image_location = $upload_dir['basedir'] . DIRECTORY_SEPARATOR .$image_data['file'];
+    $uploaded_image_location = $upload_dir['basedir'] . DIRECTORY_SEPARATOR . $image_data['file'];
 
     $image = new Imagick($uploaded_image_location); 
     $size = @getimagesize($uploaded_image_location);
@@ -566,7 +606,7 @@ function imagick_strip_exif($image) {
  */
 function imagick_convert_png_to_jpg($image) {
     $image->setImageBackgroundColor('white');
-    $image->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
+    $image = $image->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
     $image->setImageFormat('jpg');
 
     return $image;
