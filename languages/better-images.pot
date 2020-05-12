@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-05-10T19:43:22+00:00\n"
+"POT-Creation-Date: 2020-05-12T18:24:23+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: better-images\n"
@@ -34,79 +34,131 @@ msgstr ""
 msgid "https://webbson.se"
 msgstr ""
 
-#: better-images.php:162
-msgid "Re-sizing options"
+#: better-images.php:164
+msgid "Tired of resizing, compressing, converting, optimizing and exporting images over and over again? WP Image Factory is a plugin that automagically does this hard work for you. Just drag and drop your image into the media library and the plugin will produce an image that is both better looking and smaller in size. And it will also resize the original full resolution image to save space."
 msgstr ""
 
 #: better-images.php:165
-msgid "Enable re-sizing of large images"
+msgid "You can view it this way: You put the raw material into one end of the factory and it will spit out a perfect product on the other side and throw away the waste."
 msgstr ""
 
-#: better-images.php:169
-#: better-images.php:182
-#: better-images.php:195
-#: better-images.php:208
-#: better-images.php:221
-msgid "NO"
+#: better-images.php:167
+msgid "Here's everything that WP Image Factory will do for you every time you upload an image:"
+msgstr ""
+
+#: better-images.php:170
+msgid "Checks if the image already exist to avoid duplicates"
+msgstr ""
+
+#: better-images.php:171
+msgid "Replaces special characters and non english letters in the filename"
 msgstr ""
 
 #: better-images.php:172
-#: better-images.php:185
-#: better-images.php:198
-#: better-images.php:211
-#: better-images.php:224
+msgid "Removes EXIF data but keeps color space profile"
+msgstr ""
+
+#: better-images.php:173
+msgid "Converts from PNG to JPG"
+msgstr ""
+
+#: better-images.php:174
+msgid "Converts from CMYK to RGB"
+msgstr ""
+
+#: better-images.php:175
+msgid "Sharpens the image to make it more appealing and crisp"
+msgstr ""
+
+#: better-images.php:176
+msgid "Resizes and compresses the original full resolution image"
+msgstr ""
+
+#: better-images.php:183
+msgid "Settings"
+msgstr ""
+
+#: better-images.php:186
+msgid "Resize and compress the original full resolution image"
+msgstr ""
+
+#: better-images.php:190
+#: better-images.php:206
+#: better-images.php:222
+#: better-images.php:238
+#: better-images.php:254
+msgid "NO"
+msgstr ""
+
+#: better-images.php:193
+#: better-images.php:209
+#: better-images.php:225
+#: better-images.php:241
+#: better-images.php:257
 msgid "YES"
 msgstr ""
 
-#: better-images.php:178
-msgid "Shapen re-sized images"
+#: better-images.php:198
+msgid "Resizes and compresses the uploaded image to the maximum size of 2560 pixels. If the uploaded image is smaller than 2560 pixels it will be compressed but retain it's original size."
 msgstr ""
 
-#: better-images.php:191
-msgid "Remove EXIF-information from image"
+#: better-images.php:202
+msgid "Sharpen the image"
 msgstr ""
 
-#: better-images.php:204
-msgid "Convert PNG images to JPG"
+#: better-images.php:214
+msgid "Sharpens the original image and all other size variants to make your image pop and look better. This will increase the file size by around 20%. To compensate for this we raise the compression level from 82% to 72%."
 msgstr ""
 
-#: better-images.php:217
-msgid "Convert CMYK colorspace to RGB"
+#: better-images.php:218
+msgid "Remove EXIF data from image but keep color space profile"
 msgstr ""
 
-#: better-images.php:233
-msgid "Compression options"
+#: better-images.php:230
+msgid "EXIF data is information about the image embedded in the image file. This data is in most cases not used. Removing this data can shave off up to 30 kb per size variant. The color space profile will be retained so the upload image will look the same as on you computer."
 msgstr ""
 
 #: better-images.php:234
-msgid "The following settings will only apply to uploaded JPEG images and images converted to JPEG format."
-msgstr ""
-
-#: better-images.php:239
-msgid "JPEG compression level"
+msgid "Convert PNG image to JPEG"
 msgstr ""
 
 #: better-images.php:246
-msgid " = low quality (smallest files)"
+msgid "A PNG image can be up to 20 times larger than the equivalent image in JPEG. Converting PNG to JPEG will not only save you a lot of disk space, but also make your website load much faster."
 msgstr ""
 
-#: better-images.php:247
-msgid " = best quality (largest files)"
+#: better-images.php:250
+msgid "Convert image with CMYK color mode to RGB"
 msgstr ""
 
-#: better-images.php:248
+#: better-images.php:262
+msgid "CMYK color mode is used on images meant to be used in print. WordPress will not be able to compress the image so you will end upp with multiple variants of the image in different sizes, each of them weighing in at the same size in mega byte as the original full size image. Enable this feature to convert the image to RGB mode before any resizing or compression occurs."
+msgstr ""
+
+#: better-images.php:266
+msgid "JPEG compression level"
+msgstr ""
+
+#: better-images.php:275
+msgid "We have tweaked the plugin to give you the best balance between quality and file size. However, feel free to experiment with the best compression level for your specific need. Keep in mind that we use a higher compression level than the WordPress default value to compensate for the sharpening of the image."
+msgstr ""
+
+#: better-images.php:276
 msgid "Recommended value: "
 msgstr ""
 
-#: better-images.php:258
+#: better-images.php:277
+msgid "WordPress default value: "
+msgstr ""
+
+#: better-images.php:285
 msgid "Update Options"
 msgstr ""
 
-#: better-images.php:287
+#: better-images.php:314
 msgid "The file you are trying to upload already exists."
 msgstr ""
 
-#: better-images.php:435
-#: better-images.php:502
+#: better-images.php:462
+#: better-images.php:529
 msgid "Could not read image size."
 msgstr ""

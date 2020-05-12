@@ -11,6 +11,8 @@ Author URI: https://webbson.se
 License: GPLv2
 */
 
+require 'imagick_helper.php';
+
 $DEBUG_LOGGER = true;
 $PLUGIN_VERSION = '0.0.2';
 
@@ -20,7 +22,7 @@ if (get_option('bi_better_images_version') != $PLUGIN_VERSION) {
     add_option('bi_better_images_version', $PLUGIN_VERSION, '','yes');
     add_option('bi_better_images_resize_threshold', '2560', '', 'yes');
 
-    add_option('bi_better_images_quality', '75', '', 'yes');
+    add_option('bi_better_images_quality', '72', '', 'yes');
     add_option('bi_better_images_resize_image', 'yes', '', 'yes');
     add_option('bi_better_images_sharpen_image', 'yes', '', 'yes');
     add_option('bi_better_images_remove_exif', 'yes', '', 'yes');
@@ -30,6 +32,7 @@ if (get_option('bi_better_images_version') != $PLUGIN_VERSION) {
 
 // Hook in the options page
 add_action('admin_menu', 'bi_better_images_options_page');
+add_action('admin_init', 'bi_better_images_admin_init');
 
 // Hook in all the filters and actions
 
@@ -38,15 +41,30 @@ add_filter('sanitize_file_name', 'tp_sanitize_file_name', 10, 1);
 add_filter('big_image_size_threshold', 'tp_big_image_size_threshold');
 add_filter('image_make_intermediate_size', 'tp_sharpen_resized_files', 900);
 add_filter('wp_generate_attachment_metadata', 'tp_finialize_upload');
+add_filter('image_size_names_choose', 'tp_display_image_size_names_muploader', 11, 1);
 
 add_action('wp_handle_upload', 'tp_handle_uploaded');
 add_action('plugins_loaded', 'better_images_load_plugin_textdomain');
 
 /**
- * Load text domain failes.
+ * Load text domain files.
  */
 function better_images_load_plugin_textdomain() {
     load_plugin_textdomain( 'better-images', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
+}
+
+/**
+ * Init styles
+ */
+function bi_better_images_admin_init() {
+    wp_register_style( 'biBetterImagesStylesheet', plugins_url('style.css', __FILE__ ));
+}
+
+/**
+ * Enqueue our stylesheet.
+ */
+function bi_better_images_admin_styles() {
+    wp_enqueue_style('biBetterImagesStylesheet');
 }
 
 /**
@@ -69,12 +87,14 @@ function tp_big_image_size_threshold($threshold) {
 function bi_better_images_options_page() {
     global $bi_settings_page;
 	if (function_exists('add_options_page')) {
-      $bi_settings_page = add_options_page(
+        $bi_settings_page = add_options_page(
 			'Better Images',
 			'Better Images',
 			'manage_options',
 			'better-images',
-			'bi_better_images_options');
+            'bi_better_images_options');
+            
+        add_action("admin_print_styles-{$bi_settings_page}", 'bi_better_images_admin_styles');
 	}
 }
 
@@ -154,18 +174,36 @@ function bi_better_images_options() {
   <div class="wrap">
         <form method="post" accept-charset="utf-8">
 
-            <h1>Better Images</h1>
+			<div style="max-width: 768px;">
+				
+	            <h1 class="test">Better Images</h1>
+				
+				<p><?php _e('Tired of resizing, compressing, converting, optimizing and exporting images over and over again? WP Image Factory is a plugin that automagically does this hard work for you. Just drag and drop your image into the media library and the plugin will produce an image that is both better looking and smaller in size. And it will also resize the original full resolution image to save space.', 'better-images'); ?></p>
+				<p><?php _e('You can view it this way: You put the raw material into one end of the factory and it will spit out a perfect product on the other side and throw away the waste.', 'better-images'); ?></p>
+				
+				<h2><?php _e('Here\'s everything that WP Image Factory will do for you every time you upload an image:', 'better-images'); ?></h2>
+				
+				<ul>
+					<li><?php _e('Checks if the image already exist to avoid duplicates', 'better-images'); ?></li>
+					<li><?php _e('Replaces special characters and non english letters in the filename', 'better-images'); ?></li>
+					<li><?php _e('Removes EXIF data but keeps color space profile', 'better-images'); ?></li>
+					<li><?php _e('Converts from PNG to JPG', 'better-images'); ?></li>
+					<li><?php _e('Converts from CMYK to RGB', 'better-images'); ?></li>
+					<li><?php _e('Sharpens the image to make it more appealing and crisp', 'better-images'); ?></li>
+					<li><?php _e('Resizes and compresses the original full resolution image', 'better-images'); ?></li>
+				</ul>
+			
+			</div>
 
-            <hr style="margin-top:20px; margin-bottom:5px;">
-            <hr style="margin-top:5px; margin-bottom:30px;">
+            <hr style="margin-top:1rem; margin-bottom:2rem;">
 
-            <h3><?php _e('Re-sizing options', 'better-images'); ?></h3>
-            <table class="form-table">
+            <h2><?php _e('Settings', 'better-images'); ?></h2>
+            <table class="form-table" style="max-width: 1024px;">
                 <tr>
-                    <th scope="row"><?php _e('Enable re-sizing of large images', 'better-images'); ?></th>
+                    <th scope="row"><?php _e('Resize and compress the original full resolution image', 'better-images'); ?></th>
                     <td valign="top">
                         <select name="resize_yesno" id="resize_yesno">
-                            <option value="no" label="no" <?php echo ($resizing_enabled == 'no') ? 'selected="selected"' : ''; ?>>
+                            <option value="no" label="no" <?php echo ($resizing_enabled == 'No') ? 'selected="selected"' : ''; ?>>
                                 <?php _e('NO', 'better-images'); ?>
                             </option>
                             <option value="yes" label="yes" <?php echo ($resizing_enabled == 'yes') ? 'selected="selected"' : ''; ?>>
@@ -173,9 +211,12 @@ function bi_better_images_options() {
                             </option>
                         </select>
                     </td>
+					<td>
+						<p class="description"><?php _e('Resizes and compresses the uploaded image to the maximum size of 2560 pixels. If the uploaded image is smaller than 2560 pixels it will be compressed but retain it\'s original size.', 'better-images'); ?></p>
+					</td>
                 </tr>
                 <tr>
-                    <th scope="row"><?php _e('Shapen re-sized images', 'better-images'); ?></th>
+                    <th scope="row"><?php _e('Sharpen the image', 'better-images'); ?></th>
                     <td valign="top">
                         <select name="sharpen_yesno" id="sharpen_yesno">
                             <option value="no" label="no" <?php echo ($sharpen_image_enabled == 'no') ? 'selected="selected"' : ''; ?>>
@@ -186,9 +227,12 @@ function bi_better_images_options() {
                             </option>
                         </select>
                     </td>
+					<td>
+						<p class="description"><?php _e('Sharpens the original image and all other size variants to make your image pop and look better. This will increase the file size by around 20%. To compensate for this we raise the compression level from 82% to 72%.', 'better-images'); ?></p>
+					</td>
                 </tr>
                 <tr>
-                    <th scope="row"><?php _e('Remove EXIF-information from image', 'better-images'); ?></th>
+                    <th scope="row"><?php _e('Remove EXIF data from image but keep color space profile', 'better-images'); ?></th>
                     <td valign="top">
                         <select name="remove_exif_yesno" id="remove_exif_yesno">
                             <option value="no" label="no" <?php echo ($remove_exif_enabled == 'no') ? 'selected="selected"' : ''; ?>>
@@ -199,9 +243,12 @@ function bi_better_images_options() {
                             </option>
                         </select>
                     </td>
+					<td>
+						<p class="description"><?php _e('EXIF data is information about the image embedded in the image file. This data is in most cases not used. Removing this data can shave off up to 30 kb per size variant. The color space profile will be retained so the upload image will look the same as on you computer.', 'better-images'); ?></p>
+					</td>
                 </tr>
                 <tr>
-                    <th scope="row"><?php _e('Convert PNG images to JPG', 'better-images'); ?></th>
+                    <th scope="row"><?php _e('Convert PNG image to JPEG', 'better-images'); ?></th>
                     <td valign="top">
                         <select name="convert_png_yesno" id="convert_png_yesno">
                             <option value="no" label="no" <?php echo ($convert_png_enabled == 'no') ? 'selected="selected"' : ''; ?>>
@@ -212,9 +259,12 @@ function bi_better_images_options() {
                             </option>
                         </select>
                     </td>
+					<td>
+						<p class="description"><?php _e('A PNG image can be up to 20 times larger than the equivalent image in JPEG. Converting PNG to JPEG will not only save you a lot of disk space, but also make your website load much faster.', 'better-images'); ?></p>
+					</td>
                 </tr>
                 <tr>
-                    <th scope="row"><?php _e('Convert CMYK colorspace to RGB', 'better-images'); ?></th>
+                    <th scope="row"><?php _e('Convert image with CMYK color mode to RGB', 'better-images'); ?></th>
                     <td valign="top">
                         <select name="convert_cmyk_yesno" id="convert_cmyk_yesno">
                             <option value="no" label="no" <?php echo ($convert_cmyk_enabled == 'no') ? 'selected="selected"' : ''; ?>>
@@ -225,17 +275,11 @@ function bi_better_images_options() {
                             </option>
                         </select>
                     </td>
+					<td>
+						<p class="description"><?php _e('CMYK color mode is used on images meant to be used in print. WordPress will not be able to compress the image so you will end upp with multiple variants of the image in different sizes, each of them weighing in at the same size in mega byte as the original full size image. Enable this feature to convert the image to RGB mode before any resizing or compression occurs.', 'better-images'); ?></p>
+					</td>
                 </tr>
-            </table>
-    
-            <hr style="margin-top:20px; margin-bottom:30px;">
-    
-            <h3><?php _e('Compression options', 'better-images'); ?></h3>
-            <p style="max-width:700px"><?php _e('The following settings will only apply to uploaded JPEG images and images converted to JPEG format.', 'better-images'); ?></p>
-    
-            <table class="form-table">
-  
-                <tr>
+				<tr>
                     <th scope="row"><?php _e('JPEG compression level', 'better-images'); ?></th>
                     <td valign="top">
                         <select id="quality" name="quality">
@@ -243,15 +287,15 @@ function bi_better_images_options() {
                             <option value="<?php echo $i; ?>" <?php if($compression_level == $i) : ?>selected<?php endif; ?>><?php echo $i; ?></option>
                         <?php endfor; ?>
                         </select>
-                        <p class="description"><code>1</code><?php _e(' = low quality (smallest files)', 'better-images'); ?>
-                        <br><code>100</code><?php _e(' = best quality (largest files)', 'better-images'); ?>
-                        <br><?php _e('Recommended value: ', 'better-images'); ?><code>75</code></p>
                     </td>
+					<td>
+						<p class="description"><?php _e('We have tweaked the plugin to give you the best balance between quality and file size. However, feel free to experiment with the best compression level for your specific need. Keep in mind that we use a higher compression level than the WordPress default value to compensate for the sharpening of the image.', 'better-images'); ?></p>
+                        <p class="description"><?php _e('Recommended value: ', 'better-images'); ?><code>72</code>
+						<br><?php _e('WordPress default value: ', 'better-images'); ?><code>82</code></p>
+					</td>
                 </tr>
-  
             </table>
-  
-  
+
             <p class="submit" style="margin-top:10px;border-top:1px solid #eee;padding-top:20px;">
                 <input type="hidden" name="action" value="update" />
                 <?php wp_nonce_field('bi-options-update'); ?>
@@ -437,17 +481,16 @@ function tp_sharpen_resized_files($resized_file) {
     
     list($orig_w,$orig_h,$orig_type) = $size;
 
-    $max_width  = get_option('bi_better_images_width')==0 ? false : get_option('bi_better_images_width');
-    $max_height = get_option('bi_better_images_height')==0 ? false : get_option('bi_better_images_height');
     $remove_exif_enabled = (get_option('bi_better_images_remove_exif') == 'yes') ? true : false;
     $sharpen_image_enabled = (get_option('bi_better_images_sharpen_image') == 'yes') ? true : false;
+    $compression_level = get_option('bi_better_images_quality');
 
     if ($sharpen_image_enabled) {
         // We only want to use our sharpening on JPG files
         switch($orig_type) {
             case IMAGETYPE_JPEG:
             
-                $image = imagick_sharpen_image($image);
+                $image = imagick_sharpen_image($image, $compression_level);
                 break;
             default:
                 break;
@@ -490,6 +533,7 @@ function tp_finialize_upload($image_data) {
     $resizing_enabled = (get_option('bi_better_images_resize_image') == 'yes') ? true : false;
     $remove_exif_enabled = (get_option('bi_better_images_remove_exif') == 'yes') ? true : false;
     $sharpen_image_enabled = (get_option('bi_better_images_sharpen_image') == 'yes') ? true : false;
+    $compression_level = get_option('bi_better_images_quality');
 
     // Find the path to the uploaded image.
     $upload_dir = wp_upload_dir();
@@ -520,7 +564,7 @@ function tp_finialize_upload($image_data) {
         // We only want to use our sharpening on JPG files
         switch($orig_type) {
             case IMAGETYPE_JPEG:
-                $image = imagick_sharpen_image($image);
+                $image = imagick_sharpen_image($image, $compression_level);
                 break;
             default:
                 break;
@@ -541,6 +585,40 @@ function tp_finialize_upload($image_data) {
     return $image_data;
 }
 
+function tp_display_image_size_names_muploader($sizes) {
+
+    $new_sizes = array();
+    $added_sizes = get_intermediate_image_sizes();
+    
+    // $added_sizes is an indexed array, therefore need to convert it
+    // to associative array, using $value for $key and $value
+    foreach( $added_sizes as $key => $value) {
+        $new_sizes[$value] = map_image_names($value);
+    }
+
+    // This preserves the labels in $sizes, and merges the two arrays
+    $new_sizes = array_merge($new_sizes, $sizes);
+    
+    return $new_sizes;
+}
+
+function map_image_names($real_name) {
+    switch ($real_name) {
+        case 'thumbnail':
+            return '150x150';
+        case 'medium':
+            return '300x300';
+        case 'medium_large':
+            return '768x768';
+        case 'large':
+            return '1024x1024';
+        case 'full':
+            return '2560x2560';
+        default:
+            return $real_name;
+    }
+}
+
 /**
 * Debug logging function.
 */
@@ -550,75 +628,4 @@ function tp_debug_log($message) {
     if ($DEBUG_LOGGER) {
         error_log(print_r($message, true));
     }
-}
-
-/**
- * Sharpen an image with ImageMagick.
- * 
- * @param Imagick $image The imagick image.
- * @return Imagick The sharpened image.
- */
-function imagick_sharpen_image($image) {
-
-    $compression_level = get_option('bi_better_images_quality');
-
-    // Sharpen the image (the default is via the Lanczos algorithm)
-    $image->unsharpMaskImage(0, 0.6, 1.4, 0);
-
-    // Store the JPG file with the compression level specified by the user (or default).
-    $image->setImageFormat("jpg");
-    $image->setImageCompression(Imagick::COMPRESSION_JPEG);
-    $image->setImageCompressionQuality($compression_level);
-    
-    tp_debug_log("Image has been sharpened.");
-    return $image;
-}
-
-/**
- * Strip the Exif data of an image with ImageMagic
- * but keep the color profile.
- * 
- * @param Imagick $image The imagick image.
- * @return Imagick The sharpened image.
- */
-function imagick_strip_exif($image) {
-
-    // Strip Exif data but keep the color profile.
-    $profiles = $image->getImageProfiles("icc", true);
-    $has_icc_profile = (array_key_exists('icc', $profiles) !== false);
-    $image->stripImage();
-
-    if ($has_icc_profile) {
-        $image->profileImage("icc", $profiles['icc']);
-    } else {
-        tp_debug_log("Warning: No color profile found on image.");
-    }
-
-    tp_debug_log("Image has been stripped of exif information.");
-    return $image;
-}
-
-/**
- * Convert a PNG file to a JPG file with ImageMagick.
- * 
- * @param Imagick $image The image file.
- * @return Imagick The converted image.
- */
-function imagick_convert_png_to_jpg($image) {
-    $image->setImageBackgroundColor('white');
-    $image = $image->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
-    $image->setImageFormat('jpg');
-
-    return $image;
-}
-
-/**
- * Transform the image colorspace from CMYK to RGB.
- * 
- * @param Imagick $image The imagick image.
- * @return Imagick The sharpened image.
- */
-function imagick_transform_cmyk_to_rgb($image) {
-    $image->transformImageColorspace(Imagick::COLORSPACE_SRGB);
-    return $image;
 }
