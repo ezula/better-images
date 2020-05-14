@@ -593,29 +593,37 @@ function tp_display_image_size_names_muploader($sizes) {
     // $added_sizes is an indexed array, therefore need to convert it
     // to associative array, using $value for $key and $value
     foreach( $added_sizes as $key => $value) {
-        $new_sizes[$value] = map_image_names($value);
+        $new_sizes[$value] = map_image_names($key, $value);
     }
+
+    tp_debug_log('break');
+
+    foreach( $sizes as $key => $value) {
+        $sizes[$key] = map_image_names($key, $value);
+    }
+
+    tp_debug_log($sizes);
 
     // This preserves the labels in $sizes, and merges the two arrays
     $new_sizes = array_merge($new_sizes, $sizes);
-    
+
     return $new_sizes;
 }
 
-function map_image_names($real_name) {
-    switch ($real_name) {
-        case 'thumbnail':
-            return '150x150';
-        case 'medium':
-            return '300x300';
-        case 'medium_large':
-            return '768x768';
-        case 'large':
-            return '1024x1024';
-        case 'full':
-            return '2560x2560';
-        default:
-            return $real_name;
+function map_image_names($key, $value) {
+
+    if ($value == 'thumbnail' || $key == 'thumbnail') {
+        return '150x150';
+    } else if ($value == 'medium' || $key == 'medium') {
+        return '300x300';
+    } else if ($value == 'medium_large' || $key == 'medium_large') {
+        return '768x768';
+    } else if ($value == 'large' || $key == 'large') {
+        return '1024x1024';
+    } else if ($value == 'full' || $key == 'full') {
+        return '2560x2560';
+    } else {
+        return $value;
     }
 }
 
