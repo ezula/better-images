@@ -11,23 +11,31 @@ Author URI: https://webbson.se
 License: GPLv2
 */
 
+defined('ABSPATH') or die('No script kiddies please!');
+
 require 'imagick_helper.php';
 
 $DEBUG_LOGGER = true;
 $PLUGIN_VERSION = '0.0.2';
 
 // Default plugin values
-if (get_option('bi_better_images_version') != $PLUGIN_VERSION) {
+if (is_admin() && (get_option('bi_better_images_version') != $PLUGIN_VERSION)) {
+    
+    if (get_option('bi_better_images_version') != false) {
+        update_option('bi_better_images_version', $PLUGIN_VERSION);
+        tp_debug_log("Plugin has been updated.");
+    } else {
+        add_option('bi_better_images_version', $PLUGIN_VERSION);
+    }
+    
+    add_option('bi_better_images_resize_threshold', '2560');
 
-    add_option('bi_better_images_version', $PLUGIN_VERSION, '','yes');
-    add_option('bi_better_images_resize_threshold', '2560', '', 'yes');
-
-    add_option('bi_better_images_quality', '62', '', 'yes');
-    add_option('bi_better_images_resize_image', 'yes', '', 'yes');
-    add_option('bi_better_images_sharpen_image', 'yes', '', 'yes');
-    add_option('bi_better_images_remove_exif', 'yes', '', 'yes');
-    add_option('bi_better_images_convert_png', 'yes', '', 'yes');
-    add_option('bi_better_images_convert_cmyk', 'yes', '', 'yes');
+    add_option('bi_better_images_quality', '62');
+    add_option('bi_better_images_resize_image', 'yes');
+    add_option('bi_better_images_sharpen_image', 'yes');
+    add_option('bi_better_images_remove_exif', 'yes');
+    add_option('bi_better_images_convert_png', 'yes');
+    add_option('bi_better_images_convert_cmyk', 'yes');
 }
 
 // Hook in the options page
@@ -45,6 +53,17 @@ add_filter('image_size_names_choose', 'tp_display_image_size_names_muploader', 1
 
 add_action('wp_handle_upload', 'tp_handle_uploaded');
 add_action('plugins_loaded', 'better_images_load_plugin_textdomain');
+
+register_activation_hook( __FILE__, 'bi_better_images_activate' );
+
+/**
+ * Load the plugin. Do check to see if imagick is installed.
+ */
+function bi_better_images_activate() {
+    if (!extension_loaded('imagick')) {
+        die(__('Better Images could not be activated. The required PHP module ImageMagick cannot be found.', 'better-images'));
+    }
+}
 
 /**
  * Load text domain files.
@@ -500,8 +519,6 @@ function tp_sharpen_resized_files($resized_file) {
 function tp_finialize_upload($image_data) {
 
     tp_debug_log("Step 5: Post processing of the uploaded image.");
-
-    tp_debug_log($image_data);
 
     if (!array_key_exists('file', $image_data)) {
 
