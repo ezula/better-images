@@ -22,7 +22,7 @@ if (get_option('bi_better_images_version') != $PLUGIN_VERSION) {
     add_option('bi_better_images_version', $PLUGIN_VERSION, '','yes');
     add_option('bi_better_images_resize_threshold', '2560', '', 'yes');
 
-    add_option('bi_better_images_quality', '72', '', 'yes');
+    add_option('bi_better_images_quality', '62', '', 'yes');
     add_option('bi_better_images_resize_image', 'yes', '', 'yes');
     add_option('bi_better_images_sharpen_image', 'yes', '', 'yes');
     add_option('bi_better_images_remove_exif', 'yes', '', 'yes');
@@ -193,12 +193,8 @@ function bi_better_images_options() {
                     <th class="title-column" scope="row"><?php _e('Resize and compress the original full resolution image', 'better-images'); ?></th>
                     <td class="select-column" valign="top">
                         <select name="resize_yesno" id="resize_yesno">
-                            <option value="no" label="no" <?php echo ($resizing_enabled == 'No') ? 'selected="selected"' : ''; ?>>
-                                <?php _e('NO', 'better-images'); ?>
-                            </option>
-                            <option value="yes" label="yes" <?php echo ($resizing_enabled == 'yes') ? 'selected="selected"' : ''; ?>>
-                                <?php _e('YES', 'better-images'); ?>
-                            </option>
+                            <option value="no" <?php echo ($resizing_enabled == 'no') ? 'selected="selected"' : ''; ?>><?php _e('no', 'better-images'); ?></option>
+                            <option value="yes" <?php echo ($resizing_enabled == 'yes') ? 'selected="selected"' : ''; ?>><?php _e('yes', 'better-images'); ?></option>
                         </select>
                     </td>
 					<td>
@@ -209,12 +205,8 @@ function bi_better_images_options() {
                     <th class="title-column" scope="row"><?php _e('Sharpen the image', 'better-images'); ?></th>
                     <td class="select-column" valign="top">
                         <select name="sharpen_yesno" id="sharpen_yesno">
-                            <option value="no" label="no" <?php echo ($sharpen_image_enabled == 'no') ? 'selected="selected"' : ''; ?>>
-                                <?php _e('NO', 'better-images'); ?>
-                            </option>
-                            <option value="yes" label="yes" <?php echo ($sharpen_image_enabled == 'yes') ? 'selected="selected"' : ''; ?>>
-                                <?php _e('YES', 'better-images'); ?>
-                            </option>
+                            <option value="no" <?php echo ($sharpen_image_enabled == 'no') ? 'selected="selected"' : ''; ?>><?php _e('no', 'better-images'); ?></option>
+                            <option value="yes" <?php echo ($sharpen_image_enabled == 'yes') ? 'selected="selected"' : ''; ?>><?php _e('yes', 'better-images'); ?></option>
                         </select>
                     </td>
 					<td>
@@ -225,12 +217,8 @@ function bi_better_images_options() {
                     <th class="title-column" scope="row"><?php _e('Remove EXIF data from image but keep color space profile', 'better-images'); ?></th>
                     <td class="select-column" valign="top">
                         <select name="remove_exif_yesno" id="remove_exif_yesno">
-                            <option value="no" label="no" <?php echo ($remove_exif_enabled == 'no') ? 'selected="selected"' : ''; ?>>
-                                <?php _e('NO', 'better-images'); ?>
-                            </option>
-                            <option value="yes" label="yes" <?php echo ($remove_exif_enabled == 'yes') ? 'selected="selected"' : ''; ?>>
-                                <?php _e('YES', 'better-images'); ?>
-                            </option>
+                            <option value="no" <?php echo ($remove_exif_enabled == 'no') ? 'selected="selected"' : ''; ?>><?php _e('no', 'better-images'); ?></option>
+                            <option value="yes" <?php echo ($remove_exif_enabled == 'yes') ? 'selected="selected"' : ''; ?>><?php _e('yes', 'better-images'); ?></option>
                         </select>
                     </td>
 					<td>
@@ -241,12 +229,8 @@ function bi_better_images_options() {
                     <th class="title-column" scope="row"><?php _e('Convert PNG image to JPEG', 'better-images'); ?></th>
                     <td class="select-column" valign="top">
                         <select name="convert_png_yesno" id="convert_png_yesno">
-                            <option value="no" label="no" <?php echo ($convert_png_enabled == 'no') ? 'selected="selected"' : ''; ?>>
-                                <?php _e('NO', 'better-images'); ?>
-                            </option>
-                            <option value="yes" label="yes" <?php echo ($convert_png_enabled == 'yes') ? 'selected="selected"' : ''; ?>>
-                                <?php _e('YES', 'better-images'); ?>
-                            </option>
+                            <option value="no" <?php echo ($convert_png_enabled == 'no') ? 'selected="selected"' : ''; ?>><?php _e('no', 'better-images'); ?></option>
+                            <option value="yes" <?php echo ($convert_png_enabled == 'yes') ? 'selected="selected"' : ''; ?>><?php _e('yes', 'better-images'); ?></option>
                         </select>
                     </td>
 					<td>
@@ -257,12 +241,8 @@ function bi_better_images_options() {
                     <th class="title-column" scope="row"><?php _e('Convert image with CMYK color mode to RGB', 'better-images'); ?></th>
                     <td class="select-column" valign="top">
                         <select name="convert_cmyk_yesno" id="convert_cmyk_yesno">
-                            <option value="no" label="no" <?php echo ($convert_cmyk_enabled == 'no') ? 'selected="selected"' : ''; ?>>
-                                <?php _e('NO', 'better-images'); ?>
-                            </option>
-                            <option value="yes" label="yes" <?php echo ($convert_cmyk_enabled == 'yes') ? 'selected="selected"' : ''; ?>>
-                                <?php _e('YES', 'better-images'); ?>
-                            </option>
+                            <option value="no" <?php echo ($convert_cmyk_enabled == 'no') ? 'selected="selected"' : ''; ?>><?php _e('no', 'better-images'); ?></option>
+                            <option value="yes" <?php echo ($convert_cmyk_enabled == 'yes') ? 'selected="selected"' : ''; ?>><?php _e('yes', 'better-images'); ?></option>
                         </select>
                     </td>
 					<td>
