@@ -61,7 +61,7 @@ register_activation_hook( __FILE__, 'bi_better_images_activate' );
  */
 function bi_better_images_activate() {
     if (!extension_loaded('imagick')) {
-        die(__('Better Images could not be activated. The required PHP module ImageMagick cannot be found.', 'better-images'));
+        die(__('Better Images could not be activated. The required PHP module ImageMagick could not be found.', 'better-images'));
     }
 }
 
