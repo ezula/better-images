@@ -159,7 +159,7 @@ function bi_better_images_options() {
         }
     
         update_option('bi_better_images_quality', $compression_level);
-        echo('<div id="message" class="updated fade"><p><strong>Options have been updated.</strong></p></div>');
+        echo('<div id="message" class="updated fade"><p><strong>Changes have been saved.</strong></p></div>');
     }
   
     $compression_level = intval(get_option('bi_better_images_quality'));
@@ -174,34 +174,24 @@ function bi_better_images_options() {
   <div class="wrap">
         <form method="post" accept-charset="utf-8">
 
-			<div style="max-width: 768px;">
+			<div style="max-width: 620px;">
 				
-	            <h1 class="test">Better Images</h1>
+	            <h1>Better Images</h1>
 				
-				<p><?php _e('Tired of resizing, compressing, converting, optimizing and exporting images over and over again? WP Image Factory is a plugin that automagically does this hard work for you. Just drag and drop your image into the media library and the plugin will produce an image that is both better looking and smaller in size. And it will also resize the original full resolution image to save space.', 'better-images'); ?></p>
-				<p><?php _e('You can view it this way: You put the raw material into one end of the factory and it will spit out a perfect product on the other side and throw away the waste.', 'better-images'); ?></p>
-				
-				<h2><?php _e('Here\'s everything that WP Image Factory will do for you every time you upload an image:', 'better-images'); ?></h2>
-				
-				<ul>
-					<li><?php _e('Checks if the image already exist to avoid duplicates', 'better-images'); ?></li>
-					<li><?php _e('Replaces special characters and non english letters in the filename', 'better-images'); ?></li>
-					<li><?php _e('Removes EXIF data but keeps color space profile', 'better-images'); ?></li>
-					<li><?php _e('Converts from PNG to JPG', 'better-images'); ?></li>
-					<li><?php _e('Converts from CMYK to RGB', 'better-images'); ?></li>
-					<li><?php _e('Sharpens the image to make it more appealing and crisp', 'better-images'); ?></li>
-					<li><?php _e('Resizes and compresses the original full resolution image', 'better-images'); ?></li>
-				</ul>
-			
+				<p><?php _e('Tired of resizing, compressing, converting, optimizing and exporting images over and over again? Better Images is a plugin that automagically does this hard work for you. Just upload your original image into the media library and the plugin will produce an image that is both better looking and smaller in size. And it will also resize the original full resolution image to save space.', 'better-images'); ?></p>
+
 			</div>
 
             <hr style="margin-top:1rem; margin-bottom:2rem;">
 
             <h2><?php _e('Settings', 'better-images'); ?></h2>
+			
+			<p><?php _e('Here\'s everything the plugin will do for you every time you upload an image.', 'better-images'); ?></p>
+			
             <table class="form-table" style="max-width: 1024px;">
                 <tr>
-                    <th scope="row"><?php _e('Resize and compress the original full resolution image', 'better-images'); ?></th>
-                    <td valign="top">
+                    <th class="title-column" scope="row"><?php _e('Resize and compress the original full resolution image', 'better-images'); ?></th>
+                    <td class="select-column" valign="top">
                         <select name="resize_yesno" id="resize_yesno">
                             <option value="no" label="no" <?php echo ($resizing_enabled == 'No') ? 'selected="selected"' : ''; ?>>
                                 <?php _e('NO', 'better-images'); ?>
@@ -216,8 +206,8 @@ function bi_better_images_options() {
 					</td>
                 </tr>
                 <tr>
-                    <th scope="row"><?php _e('Sharpen the image', 'better-images'); ?></th>
-                    <td valign="top">
+                    <th class="title-column" scope="row"><?php _e('Sharpen the image', 'better-images'); ?></th>
+                    <td class="select-column" valign="top">
                         <select name="sharpen_yesno" id="sharpen_yesno">
                             <option value="no" label="no" <?php echo ($sharpen_image_enabled == 'no') ? 'selected="selected"' : ''; ?>>
                                 <?php _e('NO', 'better-images'); ?>
@@ -228,12 +218,12 @@ function bi_better_images_options() {
                         </select>
                     </td>
 					<td>
-						<p class="description"><?php _e('Sharpens the original image and all other size variants to make your image pop and look better. This will increase the file size by around 20%. To compensate for this we raise the compression level from 82% to 72%.', 'better-images'); ?></p>
+						<p class="description"><?php _e('Sharpens the original image and all other size variants to make your image pop and look better. This will increase the file size by around 20%. To compensate for this we raise the compression level from 82% to 62%.', 'better-images'); ?></p>
 					</td>
                 </tr>
                 <tr>
-                    <th scope="row"><?php _e('Remove EXIF data from image but keep color space profile', 'better-images'); ?></th>
-                    <td valign="top">
+                    <th class="title-column" scope="row"><?php _e('Remove EXIF data from image but keep color space profile', 'better-images'); ?></th>
+                    <td class="select-column" valign="top">
                         <select name="remove_exif_yesno" id="remove_exif_yesno">
                             <option value="no" label="no" <?php echo ($remove_exif_enabled == 'no') ? 'selected="selected"' : ''; ?>>
                                 <?php _e('NO', 'better-images'); ?>
@@ -248,8 +238,8 @@ function bi_better_images_options() {
 					</td>
                 </tr>
                 <tr>
-                    <th scope="row"><?php _e('Convert PNG image to JPEG', 'better-images'); ?></th>
-                    <td valign="top">
+                    <th class="title-column" scope="row"><?php _e('Convert PNG image to JPEG', 'better-images'); ?></th>
+                    <td class="select-column" valign="top">
                         <select name="convert_png_yesno" id="convert_png_yesno">
                             <option value="no" label="no" <?php echo ($convert_png_enabled == 'no') ? 'selected="selected"' : ''; ?>>
                                 <?php _e('NO', 'better-images'); ?>
@@ -264,8 +254,8 @@ function bi_better_images_options() {
 					</td>
                 </tr>
                 <tr>
-                    <th scope="row"><?php _e('Convert image with CMYK color mode to RGB', 'better-images'); ?></th>
-                    <td valign="top">
+                    <th class="title-column" scope="row"><?php _e('Convert image with CMYK color mode to RGB', 'better-images'); ?></th>
+                    <td class="select-column" valign="top">
                         <select name="convert_cmyk_yesno" id="convert_cmyk_yesno">
                             <option value="no" label="no" <?php echo ($convert_cmyk_enabled == 'no') ? 'selected="selected"' : ''; ?>>
                                 <?php _e('NO', 'better-images'); ?>
@@ -280,8 +270,8 @@ function bi_better_images_options() {
 					</td>
                 </tr>
 				<tr>
-                    <th scope="row"><?php _e('JPEG compression level', 'better-images'); ?></th>
-                    <td valign="top">
+                    <th class="title-column" scope="row"><?php _e('JPEG compression level', 'better-images'); ?></th>
+                    <td class="select-column" valign="top">
                         <select id="quality" name="quality">
                         <?php for($i=1; $i<=100; $i++) : ?>
                             <option value="<?php echo $i; ?>" <?php if($compression_level == $i) : ?>selected<?php endif; ?>><?php echo $i; ?></option>
@@ -290,16 +280,26 @@ function bi_better_images_options() {
                     </td>
 					<td>
 						<p class="description"><?php _e('We have tweaked the plugin to give you the best balance between quality and file size. However, feel free to experiment with the best compression level for your specific need. Keep in mind that we use a higher compression level than the WordPress default value to compensate for the sharpening of the image.', 'better-images'); ?></p>
-                        <p class="description"><?php _e('Recommended value: ', 'better-images'); ?><code>72</code>
+                        <p class="description"><?php _e('Recommended value: ', 'better-images'); ?><code>62</code>
 						<br><?php _e('WordPress default value: ', 'better-images'); ?><code>82</code></p>
 					</td>
                 </tr>
-            </table>
+				<tr>
+                    <th class="title-column" scope="row"><?php _e('More things that Better Images does', 'better-images'); ?></th>
+                    <td class="select-column" valign="top">
 
+                    </td>
+					<td>
+						<p class="description"><?php _e('Checks if the image already exist to avoid duplicates.', 'better-images'); ?>
+						<br><?php _e('Replaces special characters and non english letters in the filename.', 'better-images'); ?></p>
+					</td>
+                </tr>
+            </table>
+			
             <p class="submit" style="margin-top:10px;border-top:1px solid #eee;padding-top:20px;">
                 <input type="hidden" name="action" value="update" />
                 <?php wp_nonce_field('bi-options-update'); ?>
-                <input id="submit" name="bi-options-update" class="button button-primary" type="submit" value="<?php _e('Update Options', 'better-images'); ?>">
+                <input id="submit" name="bi-options-update" class="button button-primary" type="submit" value="<?php _e('Save Changes', 'better-images'); ?>">
             </p>
       </form>
   
@@ -593,38 +593,13 @@ function tp_display_image_size_names_muploader($sizes) {
     // $added_sizes is an indexed array, therefore need to convert it
     // to associative array, using $value for $key and $value
     foreach( $added_sizes as $key => $value) {
-        $new_sizes[$value] = map_image_names($key, $value);
+        $new_sizes[$value] = $value;
     }
-
-    tp_debug_log('break');
-
-    foreach( $sizes as $key => $value) {
-        $sizes[$key] = map_image_names($key, $value);
-    }
-
-    tp_debug_log($sizes);
 
     // This preserves the labels in $sizes, and merges the two arrays
     $new_sizes = array_merge($new_sizes, $sizes);
 
     return $new_sizes;
-}
-
-function map_image_names($key, $value) {
-
-    if ($value == 'thumbnail' || $key == 'thumbnail') {
-        return '150x150';
-    } else if ($value == 'medium' || $key == 'medium') {
-        return '300x300';
-    } else if ($value == 'medium_large' || $key == 'medium_large') {
-        return '768x768';
-    } else if ($value == 'large' || $key == 'large') {
-        return '1024x1024';
-    } else if ($value == 'full' || $key == 'full') {
-        return '2560x2560';
-    } else {
-        return $value;
-    }
 }
 
 /**

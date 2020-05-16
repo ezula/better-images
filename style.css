@@ -1,3 +1,49 @@
-.test {
-    background-color: red;
+tbody {
+	border: 1px solid #ddd;
+}
+
+tr {
+	border-bottom: 1px solid #ddd;
+}
+
+tr:nth-child(odd) {
+	background: #fff;
+}
+
+tr:nth-child(even) {
+	background: #f8f8f8;
+}
+
+.form-table th.title-column {
+	width: 250px;
+	padding: 20px;
+}
+
+.form-table td {
+	padding: 20px;
+}
+
+.form-table td.select-column {
+	width: 150px;
+	vertical-align: top;
+}
+
+.form-table td p.description {
+	margin-top: 0;
+}
+
+@media screen and (max-width: 782px) {
+	.form-table th.title-column {
+		width: auto;
+		padding-bottom: 0;
+	}
+	
+	.form-table td {
+		padding: 20px;
+	}
+	
+	.form-table td.select-column {
+		width: auto;
+		padding-bottom: 0;
+	}
 }
