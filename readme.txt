@@ -1,5 +1,5 @@
 === Better Images - Sharpen, compress, optimize and resize original full image ===
-Contributors: hemenderki, mikaelsvens, charliederki
+Contributors: hemenderki, svunz, charliederki
 Tags: images, image, sharpen, sharpening, compress, compression, optimize, optimization, resize, resizing, original image, full image
 Requires at least: 5.3
 Tested up to: 5.4.1
