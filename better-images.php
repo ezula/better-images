@@ -1,9 +1,8 @@
 <?php
 /**
  * Plugin Name: Better Images
- * Plugin URI: https://betterimages.se
  * Description: A WordPress plugin for better images.
- * Version: 0.0.2
+ * Version: 0.8.0
  * Text Domain: better-images
  * Domain Path: /languages
  * Author: Webbson AB
@@ -17,8 +16,8 @@ defined( 'ABSPATH' ) || die( 'No script kiddies please!' );
 
 require 'imagick-helper.php';
 
-$debug_logger   = true;
-$plugin_version = '0.0.2';
+$debug_logger   = false;
+$plugin_version = '0.8.0';
 
 // Default plugin values.
 if ( is_admin() && ( get_option( 'bi_better_images_version' ) !== $plugin_version ) ) {

@@ -79,7 +79,7 @@ By default WordPress will only display and let you choose from four sizes in the
 WordPress however creates four more sizes but does not display them.
 - Max 768px width
 - Max 1536px width and height
-- Max 2028px width and height
+- Max 2048px width and height
 - Max 2560px width and height
 
 Better Images will display and let you choose from all these sizes. This is also compatible with many page builders such as Oxygen, Beaver Builder, Divi, Elementor, Brizy and many more.
@@ -142,6 +142,6 @@ Yes, that is possible. However, the images will be regenerated from the compress
 Yes that is possible, but, Better Images is meant to make image editing a thing of the past. Since WordPress is using responsive image handling there are no reasons to manually resize images. Also keep in mind that the resizing will happen from an already compressed and resized image.
 
 == Changelog ==
-### 0.0.2
+### 0.8.0
 
 Beta release.
