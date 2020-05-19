@@ -9,20 +9,31 @@
  * Sharpen an image with ImageMagick.
  *
  * @param Imagick $image The imagick image.
- * @param Number  $compression_level The compression level.
  * @return Imagick The sharpened image.
  */
-function imagick_sharpen_image( $image, $compression_level ) {
+function imagick_sharpen_image( $image ) {
 
 	// Sharpen the image (the default is via the Lanczos algorithm).
 	$image->unsharpMaskImage( 0, 0.6, 1.4, 0 );
+
+	tp_debug_log( 'Image has been sharpened.' );
+	return $image;
+}
+
+/**
+ * Compress an image with ImageMagick.
+ *
+ * @param Imagick $image The imagick image.
+ * @param Number  $compression_level The compression level.
+ * @return Imagick The sharpened image.
+ */
+function imagick_compress_image( $image, $compression_level ) {
 
 	// Store the JPG file with the compression level specified by the user (or default).
 	$image->setImageFormat( 'jpg' );
 	$image->setImageCompression( Imagick::COMPRESSION_JPEG );
 	$image->setImageCompressionQuality( $compression_level );
 
-	tp_debug_log( 'Image has been sharpened.' );
 	return $image;
 }
 

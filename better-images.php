@@ -137,7 +137,7 @@ function bi_better_images_options() {
 			wp_die( 'Not authorized' );
 		}
 
-		$resizing_enabled      = ( 'yes' === $_POST['resize_yesno'] ? 'yes' : 'no' );
+		$resizing_enabled      = 'yes'; // ( 'yes' === $_POST['resize_yesno'] ? 'yes' : 'no' );
 		$sharpen_image_enabled = ( 'yes' === $_POST['sharpen_yesno'] ? 'yes' : 'no' );
 		$remove_exif_enabled   = ( 'yes' === $_POST['remove_exif_yesno'] ? 'yes' : 'no' );
 		$convert_png_enabled   = ( 'yes' === $_POST['convert_png_yesno'] ? 'yes' : 'no' );
@@ -216,13 +216,28 @@ function bi_better_images_options() {
 				<tr>
 					<th class="title-column" scope="row"><?php esc_html_e( 'Resize and compress the original full resolution image', 'better-images' ); ?></th>
 					<td class="select-column" valign="top">
-						<select name="resize_yesno" id="resize_yesno">
+						<select name="resize_yesno" id="resize_yesno" disabled>
 							<option value="no" <?php echo ( 'no' === $resizing_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'no', 'better-images' ); ?></option>
 							<option value="yes" <?php echo ( 'yes' === $resizing_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'yes', 'better-images' ); ?></option>
 						</select>
 					</td>
 					<td>
 						<p class="description"><?php esc_html_e( "Resizes and compresses the uploaded image to the maximum size of 2560 pixels. If the uploaded image is smaller than 2560 pixels it will be compressed but retain it's original size.", 'better-images' ); ?></p>
+					</td>
+				</tr>
+				<tr>
+					<th class="title-column" scope="row"><?php esc_html_e( 'JPEG quality', 'better-images' ); ?></th>
+					<td class="select-column" valign="top">
+						<select id="quality" name="quality">
+						<?php for ( $i = 1; $i <= 100; $i++ ) : ?>
+							<option value="<?php echo $i; ?>" <?php if ( $compression_level === $i ) : ?> selected <?php endif; ?>><?php echo $i; ?></option>
+						<?php endfor; ?>
+						</select>
+					</td>
+					<td>
+						<p class="description"><?php esc_html_e( 'We have tweaked the plugin to give you the best balance between quality and file size. However, feel free to experiment with the best compression level for your specific need. Keep in mind that we use a higher compression level than the WordPress default value to compensate for the sharpening of the image.', 'better-images' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Recommended value: ', 'better-images' ); ?><code>62</code>
+						<br><?php esc_html_e( 'WordPress default value: ', 'better-images' ); ?><code>82</code></p>
 					</td>
 				</tr>
 				<tr>
@@ -271,21 +286,6 @@ function bi_better_images_options() {
 					</td>
 					<td>
 						<p class="description"><?php esc_html_e( 'CMYK color mode is used on images meant to be used in print. WordPress will not be able to compress the image so you will end upp with multiple variants of the image in different sizes, each of them weighing in at the same size in mega byte as the original full size image. Enable this feature to convert the image to RGB mode before any resizing or compression occurs.', 'better-images' ); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th class="title-column" scope="row"><?php esc_html_e( 'JPEG compression level', 'better-images' ); ?></th>
-					<td class="select-column" valign="top">
-						<select id="quality" name="quality">
-						<?php for ( $i = 1; $i <= 100; $i++ ) : ?>
-							<option value="<?php echo $i; ?>" <?php if ( $compression_level === $i ) : ?> selected <?php endif; ?>><?php echo $i; ?></option>
-						<?php endfor; ?>
-						</select>
-					</td>
-					<td>
-						<p class="description"><?php esc_html_e( 'We have tweaked the plugin to give you the best balance between quality and file size. However, feel free to experiment with the best compression level for your specific need. Keep in mind that we use a higher compression level than the WordPress default value to compensate for the sharpening of the image.', 'better-images' ); ?></p>
-						<p class="description"><?php esc_html_e( 'Recommended value: ', 'better-images' ); ?><code>62</code>
-						<br><?php esc_html_e( 'WordPress default value: ', 'better-images' ); ?><code>82</code></p>
 					</td>
 				</tr>
 				<tr>
@@ -485,8 +485,6 @@ function tp_handle_uploaded( $image_data ) {
 function tp_sharpen_resized_files( $resized_file ) {
 	tp_debug_log( 'Step 4: Sharpen image and remove exif and metadata on upload.' );
 
-	tp_debug_log( $resized_file );
-
 	$image = new Imagick( $resized_file );
 	$size  = @getimagesize( $resized_file );
 
@@ -504,7 +502,7 @@ function tp_sharpen_resized_files( $resized_file ) {
 		// We only want to use our sharpening on JPG files.
 		switch ( $orig_type ) {
 			case IMAGETYPE_JPEG:
-				$image = imagick_sharpen_image( $image, $compression_level );
+				$image = imagick_sharpen_image( $image );
 				break;
 			default:
 				break;
@@ -515,6 +513,9 @@ function tp_sharpen_resized_files( $resized_file ) {
 		// Strip the Exif data on the image (keep color profile).
 		$image = imagick_strip_exif( $image );
 	}
+
+	// Compress the image.
+	$image = imagick_compress_image( $image, $compression_level );
 
 	// Write the final image to disk.
 	$image->writeImage( $resized_file );
@@ -577,7 +578,7 @@ function tp_finialize_upload( $image_data ) {
 		// We only want to use our sharpening on JPG files.
 		switch ( $orig_type ) {
 			case IMAGETYPE_JPEG:
-				$image = imagick_sharpen_image( $image, $compression_level );
+				$image = imagick_sharpen_image( $image );
 				break;
 			default:
 				break;
@@ -588,6 +589,9 @@ function tp_finialize_upload( $image_data ) {
 		// Strip the Exif data on the image (keep color profile).
 		$image = imagick_strip_exif( $image );
 	}
+
+	// Compress the image.
+	$image = imagick_compress_image( $image, $compression_level );
 
 	// Write the final image to disk.
 	$image->writeImage( $uploaded_image_location );
