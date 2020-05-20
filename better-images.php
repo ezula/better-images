@@ -433,11 +433,6 @@ function tp_handle_uploaded( $image_data ) {
 		return $image_data;
 	}
 
-	if ( ! $convert_cmyk_enabled ) {
-		tp_debug_log( 'Conversion to CMYK disabled, will not check for CMYK colorspace on image, proceeding.' );
-		return $image_data;
-	}
-
 	$image   = getimagesize( $image_data['file'] );
 	$is_cmyk = array_key_exists( 'channels', $image ) && 4 === $image['channels'];
 
@@ -449,6 +444,12 @@ function tp_handle_uploaded( $image_data ) {
 		$old_png_file = $image_data['file'];
 
 		if ( $is_cmyk ) {
+
+			if ( ! $convert_cmyk_enabled ) {
+				tp_debug_log( 'Conversion to CMYK disabled, will not check for CMYK colorspace on image, proceeding.' );
+				return $image_data;
+			}
+
 			tp_debug_log( 'Image is CMYK. Attempting to convert colorspace to RGB.' );
 			$image = imagick_transform_cmyk_to_rgb( $image );
 		}
