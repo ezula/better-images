@@ -9,20 +9,31 @@
  * Sharpen an image with ImageMagick.
  *
  * @param Imagick $image The imagick image.
- * @param Number  $compression_level The compression level.
  * @return Imagick The sharpened image.
  */
-function imagick_sharpen_image( $image, $compression_level ) {
+function imagick_sharpen_image( $image ) {
 
 	// Sharpen the image (the default is via the Lanczos algorithm).
 	$image->unsharpMaskImage( 0, 0.6, 1.4, 0 );
+
+	tp_debug_log( 'Image has been sharpened.' );
+	return $image;
+}
+
+/**
+ * Compress an image with ImageMagick.
+ *
+ * @param Imagick $image The imagick image.
+ * @param Number  $compression_level The compression level.
+ * @return Imagick The sharpened image.
+ */
+function imagick_compress_image( $image, $compression_level ) {
 
 	// Store the JPG file with the compression level specified by the user (or default).
 	$image->setImageFormat( 'jpg' );
 	$image->setImageCompression( Imagick::COMPRESSION_JPEG );
 	$image->setImageCompressionQuality( $compression_level );
 
-	tp_debug_log( 'Image has been sharpened.' );
 	return $image;
 }
 
@@ -71,6 +82,18 @@ function imagick_convert_png_to_jpg( $image ) {
  * @return Imagick The sharpened image.
  */
 function imagick_transform_cmyk_to_rgb( $image ) {
-	$image->transformImageColorspace( Imagick::COLORSPACE_SRGB );
+
+	$profiles = $image->getImageProfiles( '*', false );
+	$has_icc_profile = ( array_search( 'icc', $profiles ) !== false );
+
+	if ( $has_icc_profile === false ) {
+		$icc_cmyk = file_get_contents( plugin_dir_path( __FILE__ ) . 'USWebUncoated.icc' );
+		$img->profileImage( 'icc', $icc_cmyk );
+		unset( $icc_cmyk );
+	}
+
+	$icc_rgb = file_get_contents( plugin_dir_path( __FILE__ ) . 'sRGB-IEC61966-2.1.icc' );
+	$image->profileImage( 'icc', $icc_rgb );
+	
 	return $image;
 }
