@@ -10,3 +10,8 @@ From the WP-CLI, run the following command:
 foo@bar:~$ php wp-cli.phar i18n make-pot . languages/better-images.pot
 ```
 
+## How to do code style and syntax check (must have phpcs + WP code style installed)
+
+```console
+phpcs --standard=WordPress better-images.php
+```
