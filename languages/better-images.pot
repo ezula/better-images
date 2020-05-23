@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-05-23T07:31:47+00:00\n"
+"POT-Creation-Date: 2020-05-23T19:38:21+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: better-images\n"
@@ -19,7 +19,7 @@ msgid "Better Images"
 msgstr ""
 
 #. Description of the plugin
-msgid "A WordPress plugin for better images."
+msgid "Just upload your images and this plugin will resize, sharpen, compress, convert and optimize them to produce images that are both better looking and smaller in size. And it will also resize the original full resolution image to save space."
 msgstr ""
 
 #. Author of the plugin
@@ -31,7 +31,7 @@ msgid "https://webbson.se"
 msgstr ""
 
 #: better-images.php:72
-msgid "Better Images could not enabled. The required PHP module ImageMagick could not be found. To enable Better Images please contact your web host and ask them to install ImageMagick."
+msgid "Better Images could not be enabled. The required PHP module ImageMagick could not be found. To enable Better Images please contact your web host and ask them to install ImageMagick."
 msgstr ""
 
 #: better-images.php:210
@@ -55,7 +55,7 @@ msgstr ""
 #: better-images.php:264
 #: better-images.php:276
 #: better-images.php:288
-msgid "No"
+msgid "Yes"
 msgstr ""
 
 #: better-images.php:226
@@ -63,7 +63,7 @@ msgstr ""
 #: better-images.php:265
 #: better-images.php:277
 #: better-images.php:289
-msgid "Yes"
+msgid "No"
 msgstr ""
 
 #: better-images.php:230
@@ -138,11 +138,19 @@ msgstr ""
 msgid "Save Changes"
 msgstr ""
 
-#: better-images.php:341
+#: better-images.php:317
+msgid "If you like this plugin please consider writing a review and giving us 5 stars."
+msgstr ""
+
+#: better-images.php:320
+msgid "Write a review"
+msgstr ""
+
+#: better-images.php:357
 msgid "The file you are trying to upload already exists."
 msgstr ""
 
-#: better-images.php:499
-#: better-images.php:567
+#: better-images.php:515
+#: better-images.php:583
 msgid "Could not read image size."
 msgstr ""

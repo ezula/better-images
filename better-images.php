@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Better Images
- * Description: A WordPress plugin for better images.
+ * Description: Just upload your images and this plugin will resize, sharpen, compress, convert and optimize them to produce images that are both better looking and smaller in size. And it will also resize the original full resolution image to save space.
  * Version: 0.8.0
  * Text Domain: better-images
  * Domain Path: /languages
@@ -69,7 +69,7 @@ function bi_better_images_after_setup_theme() {
  */
 function bi_better_images_activate() {
 	if ( ! extension_loaded( 'imagick' ) ) {
-		die( esc_html__( 'Better Images could not enabled. The required PHP module ImageMagick could not be found. To enable Better Images please contact your web host and ask them to install ImageMagick.', 'better-images' ) );
+		die( esc_html__( 'Better Images could not be enabled. The required PHP module ImageMagick could not be found. To enable Better Images please contact your web host and ask them to install ImageMagick.', 'better-images' ) );
 	}
 }
 
@@ -222,8 +222,8 @@ function bi_better_images_options() {
 					<th class="title-column" scope="row"><?php esc_html_e( 'Resize and compress the original full resolution image', 'better-images' ); ?></th>
 					<td class="select-column" valign="top">
 						<select name="resize_yesno" id="resize_yesno" disabled>
-							<option value="no" <?php echo ( 'no' === $resizing_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
 							<option value="yes" <?php echo ( 'yes' === $resizing_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
+							<option value="no" <?php echo ( 'no' === $resizing_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
 						</select>
 					</td>
 					<td>
@@ -249,8 +249,8 @@ function bi_better_images_options() {
 					<th class="title-column" scope="row"><?php esc_html_e( 'Sharpen the image', 'better-images' ); ?></th>
 					<td class="select-column" valign="top">
 						<select name="sharpen_yesno" id="sharpen_yesno">
-							<option value="no" <?php echo ( 'no' === $sharpen_image_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
 							<option value="yes" <?php echo ( 'yes' === $sharpen_image_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
+							<option value="no" <?php echo ( 'no' === $sharpen_image_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
 						</select>
 					</td>
 					<td>
@@ -261,8 +261,8 @@ function bi_better_images_options() {
 					<th class="title-column" scope="row"><?php esc_html_e( 'Remove EXIF data from image but keep color space profile', 'better-images' ); ?></th>
 					<td class="select-column" valign="top">
 						<select name="remove_exif_yesno" id="remove_exif_yesno">
-							<option value="no" <?php echo ( 'no' === $remove_exif_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
 							<option value="yes" <?php echo ( 'yes' === $remove_exif_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
+							<option value="no" <?php echo ( 'no' === $remove_exif_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
 						</select>
 					</td>
 					<td>
@@ -273,8 +273,8 @@ function bi_better_images_options() {
 					<th class="title-column" scope="row"><?php esc_html_e( 'Convert PNG image to JPEG', 'better-images' ); ?></th>
 					<td class="select-column" valign="top">
 						<select name="convert_png_yesno" id="convert_png_yesno">
-							<option value="no" <?php echo ( 'no' === $convert_png_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
 							<option value="yes" <?php echo ( 'yes' === $convert_png_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
+							<option value="no" <?php echo ( 'no' === $convert_png_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
 						</select>
 					</td>
 					<td>
@@ -285,8 +285,8 @@ function bi_better_images_options() {
 					<th class="title-column" scope="row"><?php esc_html_e( 'Convert image with CMYK color mode to RGB', 'better-images' ); ?></th>
 					<td class="select-column" valign="top">
 						<select name="convert_cmyk_yesno" id="convert_cmyk_yesno">
-							<option value="no" <?php echo ( 'no' === $convert_cmyk_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
 							<option value="yes" <?php echo ( 'yes' === $convert_cmyk_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
+							<option value="no" <?php echo ( 'no' === $convert_cmyk_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
 						</select>
 					</td>
 					<td>
@@ -312,6 +312,22 @@ function bi_better_images_options() {
 				<input id="submit" name="bi-options-update" class="button button-primary" type="submit" value="<?php esc_html_e( 'Save Changes', 'better-images' ); ?>">
 			</p>
 		</form>
+		<div class="ratings-box">
+			
+			<p><?php esc_html_e( 'If you like this plugin please consider writing a review and giving us 5 stars.', 'better-images' ); ?></p>
+			
+			<div style="display: flex; justify-content: space-between;">
+				<div><a href="https://wordpress.org/support/plugin/better-images/reviews/#new-post" target="_blank"><?php esc_html_e( 'Write a review', 'better-images' ); ?></a></div>
+				<div class="wporg-ratings" aria-label="5 av 5 stars" style="color:#ffb900;">
+					<span class="dashicons dashicons-star-filled"></span>
+					<span class="dashicons dashicons-star-filled"></span>
+					<span class="dashicons dashicons-star-filled"></span>
+					<span class="dashicons dashicons-star-filled"></span>
+					<span class="dashicons dashicons-star-filled"></span>
+				</div>
+			</div>
+			
+		</div>
 	</div>
 	<?php
 }

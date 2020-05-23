@@ -24,12 +24,38 @@ tr:nth-child(even) {
 }
 
 .form-table td.select-column {
-	width: 150px;
+	width: 100px;
 	vertical-align: top;
 }
 
 .form-table td p.description {
 	margin-top: 0;
+}
+
+.ratings-box {
+	background: #fff;
+	border: 1px solid #ddd;
+	padding: 0 1.2em 1em 1.2em;
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	max-width: 250px;
+}
+
+h1:first-child,
+h2:first-child,
+h3:first-child,
+h4:first-child {
+	margin-top: 0;
+}
+
+@media screen and (max-width: 1200px) {
+	.ratings-box {
+		position: relative;
+		top: -60px;
+		right: 0;
+		margin-left: auto;
+	}
 }
 
 @media screen and (max-width: 782px) {
@@ -45,5 +71,16 @@ tr:nth-child(even) {
 	.form-table td.select-column {
 		width: auto;
 		padding-bottom: 0;
+	}
+	
+	.ratings-box {
+		top: -70px;
+	}
+}
+
+@media screen and (max-width: 520px) {
+	.ratings-box {
+		top: 0;
+		margin-left: 0;
 	}
 }
