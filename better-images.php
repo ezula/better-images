@@ -60,8 +60,11 @@ add_action( 'after_setup_theme', 'bi_better_images_after_setup_theme' );
 
 register_activation_hook( __FILE__, 'bi_better_images_activate' );
 
+/**
+ * Add a fixed height for the medium_large image size.
+ */
 function bi_better_images_after_setup_theme() {
-    add_image_size( 'medium_large', 768, 768 );
+	add_image_size( 'medium_large', 768, 768 );
 }
 
 /**
@@ -313,9 +316,9 @@ function bi_better_images_options() {
 			</p>
 		</form>
 		<div class="ratings-box">
-			
+
 			<p><?php esc_html_e( 'If you like this plugin please consider writing a review and giving us 5 stars.', 'better-images' ); ?></p>
-			
+
 			<div style="display: flex; justify-content: space-between;">
 				<div><a href="https://wordpress.org/support/plugin/better-images/reviews/#new-post" target="_blank"><?php esc_html_e( 'Write a review', 'better-images' ); ?></a></div>
 				<div class="wporg-ratings" aria-label="5 av 5 stars" style="color:#ffb900;">
@@ -326,7 +329,7 @@ function bi_better_images_options() {
 					<span class="dashicons dashicons-star-filled"></span>
 				</div>
 			</div>
-			
+
 		</div>
 	</div>
 	<?php

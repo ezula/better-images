@@ -83,10 +83,10 @@ function imagick_convert_png_to_jpg( $image ) {
  */
 function imagick_transform_cmyk_to_rgb( $image ) {
 
-	$profiles = $image->getImageProfiles( '*', false );
+	$profiles        = $image->getImageProfiles( '*', false );
 	$has_icc_profile = ( array_search( 'icc', $profiles ) !== false );
 
-	if ( $has_icc_profile === false ) {
+	if ( false === $has_icc_profile ) {
 		$icc_cmyk = file_get_contents( plugin_dir_path( __FILE__ ) . 'USWebUncoated.icc' );
 		$img->profileImage( 'icc', $icc_cmyk );
 		unset( $icc_cmyk );
@@ -94,6 +94,6 @@ function imagick_transform_cmyk_to_rgb( $image ) {
 
 	$icc_rgb = file_get_contents( plugin_dir_path( __FILE__ ) . 'sRGB-IEC61966-2.1.icc' );
 	$image->profileImage( 'icc', $icc_rgb );
-	
+
 	return $image;
 }
