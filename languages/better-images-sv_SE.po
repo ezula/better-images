@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Better Images\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/better-images\n"
 "POT-Creation-Date: 2020-05-23T19:38:21+00:00\n"
-"PO-Revision-Date: 2020-05-23 21:39+0200\n"
+"PO-Revision-Date: 2020-05-23 21:42+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: sv_SE\n"
@@ -223,10 +223,12 @@ msgid ""
 "If you like this plugin please consider writing a review and giving us 5 "
 "stars."
 msgstr ""
+"Om du gillar det här pluginet så överväga att skriva en recension och ge oss "
+"5 stjärnor."
 
 #: better-images.php:320
 msgid "Write a review"
-msgstr ""
+msgstr "Skriv en recension"
 
 #: better-images.php:357
 msgid "The file you are trying to upload already exists."
