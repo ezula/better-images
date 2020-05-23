@@ -54,17 +54,22 @@ add_filter( 'image_size_names_choose', 'tp_display_image_size_names_muploader', 
 
 add_action( 'wp_handle_upload', 'tp_handle_uploaded' );
 add_action( 'plugins_loaded', 'better_images_load_plugin_textdomain' );
+add_action( 'after_setup_theme', 'bi_better_images_after_setup_theme' );
 
 // Register activation hook.
 
 register_activation_hook( __FILE__, 'bi_better_images_activate' );
+
+function bi_better_images_after_setup_theme() {
+    add_image_size( 'medium_large', 768, 768 );
+}
 
 /**
  * Load the plugin. Do check to see if imagick is installed.
  */
 function bi_better_images_activate() {
 	if ( ! extension_loaded( 'imagick' ) ) {
-		die( esc_html__( 'Better Images could not be activated. The required PHP module ImageMagick could not be found.', 'better-images' ) );
+		die( esc_html__( 'Better Images could not enabled. The required PHP module ImageMagick could not be found. To enable Better Images please contact your web host and ask them to install ImageMagick.', 'better-images' ) );
 	}
 }
 
@@ -217,12 +222,12 @@ function bi_better_images_options() {
 					<th class="title-column" scope="row"><?php esc_html_e( 'Resize and compress the original full resolution image', 'better-images' ); ?></th>
 					<td class="select-column" valign="top">
 						<select name="resize_yesno" id="resize_yesno" disabled>
-							<option value="no" <?php echo ( 'no' === $resizing_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'no', 'better-images' ); ?></option>
-							<option value="yes" <?php echo ( 'yes' === $resizing_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'yes', 'better-images' ); ?></option>
+							<option value="no" <?php echo ( 'no' === $resizing_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
+							<option value="yes" <?php echo ( 'yes' === $resizing_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
 						</select>
 					</td>
 					<td>
-						<p class="description"><?php esc_html_e( "Resizes and compresses the uploaded image to the maximum size of 2560 pixels. If the uploaded image is smaller than 2560 pixels it will be compressed but retain it's original size.", 'better-images' ); ?></p>
+						<p class="description"><?php esc_html_e( "Resizes and compresses the uploaded image to the maximum size of 2560 pixels. If the uploaded image is smaller than 2560 pixels it will be compressed but retain it's original size. This is the core feature of the plugin and can not be disabled.", 'better-images' ); ?></p>
 					</td>
 				</tr>
 				<tr>
@@ -244,8 +249,8 @@ function bi_better_images_options() {
 					<th class="title-column" scope="row"><?php esc_html_e( 'Sharpen the image', 'better-images' ); ?></th>
 					<td class="select-column" valign="top">
 						<select name="sharpen_yesno" id="sharpen_yesno">
-							<option value="no" <?php echo ( 'no' === $sharpen_image_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'no', 'better-images' ); ?></option>
-							<option value="yes" <?php echo ( 'yes' === $sharpen_image_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'yes', 'better-images' ); ?></option>
+							<option value="no" <?php echo ( 'no' === $sharpen_image_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
+							<option value="yes" <?php echo ( 'yes' === $sharpen_image_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
 						</select>
 					</td>
 					<td>
@@ -256,8 +261,8 @@ function bi_better_images_options() {
 					<th class="title-column" scope="row"><?php esc_html_e( 'Remove EXIF data from image but keep color space profile', 'better-images' ); ?></th>
 					<td class="select-column" valign="top">
 						<select name="remove_exif_yesno" id="remove_exif_yesno">
-							<option value="no" <?php echo ( 'no' === $remove_exif_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'no', 'better-images' ); ?></option>
-							<option value="yes" <?php echo ( 'yes' === $remove_exif_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'yes', 'better-images' ); ?></option>
+							<option value="no" <?php echo ( 'no' === $remove_exif_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
+							<option value="yes" <?php echo ( 'yes' === $remove_exif_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
 						</select>
 					</td>
 					<td>
@@ -268,8 +273,8 @@ function bi_better_images_options() {
 					<th class="title-column" scope="row"><?php esc_html_e( 'Convert PNG image to JPEG', 'better-images' ); ?></th>
 					<td class="select-column" valign="top">
 						<select name="convert_png_yesno" id="convert_png_yesno">
-							<option value="no" <?php echo ( 'no' === $convert_png_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'no', 'better-images' ); ?></option>
-							<option value="yes" <?php echo ( 'yes' === $convert_png_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'yes', 'better-images' ); ?></option>
+							<option value="no" <?php echo ( 'no' === $convert_png_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
+							<option value="yes" <?php echo ( 'yes' === $convert_png_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
 						</select>
 					</td>
 					<td>
@@ -280,8 +285,8 @@ function bi_better_images_options() {
 					<th class="title-column" scope="row"><?php esc_html_e( 'Convert image with CMYK color mode to RGB', 'better-images' ); ?></th>
 					<td class="select-column" valign="top">
 						<select name="convert_cmyk_yesno" id="convert_cmyk_yesno">
-							<option value="no" <?php echo ( 'no' === $convert_cmyk_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'no', 'better-images' ); ?></option>
-							<option value="yes" <?php echo ( 'yes' === $convert_cmyk_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'yes', 'better-images' ); ?></option>
+							<option value="no" <?php echo ( 'no' === $convert_cmyk_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
+							<option value="yes" <?php echo ( 'yes' === $convert_cmyk_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
 						</select>
 					</td>
 					<td>
@@ -295,7 +300,8 @@ function bi_better_images_options() {
 					</td>
 					<td>
 						<p class="description"><?php esc_html_e( 'Checks if the image already exist to avoid duplicates.', 'better-images' ); ?>
-						<br><?php esc_html_e( 'Replaces special characters and non english letters in the filename.', 'better-images' ); ?></p>
+						<br><?php esc_html_e( 'Replaces special characters and non english letters in the filename.', 'better-images' ); ?>
+						<br><?php esc_html_e( 'Adds a max height of 768 pixels to medium_large size variant.', 'better-images' ); ?></p>
 					</td>
 				</tr>
 			</table>
