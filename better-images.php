@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Better Images
  * Description: Just upload your images and this plugin will resize, sharpen, compress, convert and optimize them to produce images that are both better looking and smaller in size. And it will also resize the original full resolution image to save space.
- * Version: 0.8.0
+ * Version: 0.8.1
  * Text Domain: better-images
  * Domain Path: /languages
  * Author: Webbson AB
@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || die( 'No script kiddies please!' );
 require 'imagick-helper.php';
 
 $debug_logger   = false;
-$plugin_version = '0.8.0';
+$plugin_version = '0.8.1';
 
 // Default plugin values.
 if ( is_admin() && ( get_option( 'wnbi_better_images_version' ) !== $plugin_version ) ) {
