@@ -20,57 +20,57 @@ $debug_logger   = false;
 $plugin_version = '0.8.0';
 
 // Default plugin values.
-if ( is_admin() && ( get_option( 'bi_better_images_version' ) !== $plugin_version ) ) {
-	if ( get_option( 'bi_better_images_version' ) !== false ) {
-		update_option( 'bi_better_images_version', $plugin_version );
+if ( is_admin() && ( get_option( 'wnbi_better_images_version' ) !== $plugin_version ) ) {
+	if ( get_option( 'wnbi_better_images_version' ) !== false ) {
+		update_option( 'wnbi_better_images_version', $plugin_version );
 		tp_debug_log( 'Plugin has been updated.' );
 	} else {
-		add_option( 'bi_better_images_version', $plugin_version );
+		add_option( 'wnbi_better_images_version', $plugin_version );
 	}
 
-	add_option( 'bi_better_images_resize_threshold', '2560' );
-	add_option( 'bi_better_images_quality', '62' );
-	add_option( 'bi_better_images_resize_image', 'yes' );
-	add_option( 'bi_better_images_sharpen_image', 'yes' );
-	add_option( 'bi_better_images_remove_exif', 'yes' );
-	add_option( 'bi_better_images_convert_png', 'yes' );
-	add_option( 'bi_better_images_convert_cmyk', 'yes' );
+	add_option( 'wnbi_better_images_resize_threshold', '2560' );
+	add_option( 'wnbi_better_images_quality', '62' );
+	add_option( 'wnbi_better_images_resize_image', 'yes' );
+	add_option( 'wnbi_better_images_sharpen_image', 'yes' );
+	add_option( 'wnbi_better_images_remove_exif', 'yes' );
+	add_option( 'wnbi_better_images_convert_png', 'yes' );
+	add_option( 'wnbi_better_images_convert_cmyk', 'yes' );
 }
 
 // Hook in the options page.
-add_action( 'admin_menu', 'bi_better_images_options_page' );
-add_action( 'admin_init', 'bi_better_images_admin_init' );
+add_action( 'admin_menu', 'wnbi_admin_menu' );
+add_action( 'admin_init', 'wnbi_admin_init' );
 
 // Hook in all the filters.
 
-add_filter( 'wp_handle_upload_prefilter', 'tp_validate_image' );
-add_filter( 'sanitize_file_name', 'tp_sanitize_file_name', 10, 1 );
-add_filter( 'big_image_size_threshold', 'tp_big_image_size_threshold' );
-add_filter( 'image_make_intermediate_size', 'tp_sharpen_resized_files', 900 );
-add_filter( 'wp_generate_attachment_metadata', 'tp_finialize_upload' );
-add_filter( 'image_size_names_choose', 'tp_display_image_size_names_muploader', 11, 1 );
+add_filter( 'wp_handle_upload_prefilter', 'wnbi_wp_handle_upload_prefilter' );
+add_filter( 'sanitize_file_name', 'wnbi_sanitize_file_name', 10, 1 );
+add_filter( 'big_image_size_threshold', 'wnbi_big_image_size_threshold' );
+add_filter( 'image_make_intermediate_size', 'wnbi_image_make_intermediate_size', 900 );
+add_filter( 'wp_generate_attachment_metadata', 'wnbi_wp_generate_attachment_metadata' );
+add_filter( 'image_size_names_choose', 'wnbi_image_size_names_choose', 11, 1 );
 
 // Hook in all the actions.
 
-add_action( 'wp_handle_upload', 'tp_handle_uploaded' );
-add_action( 'plugins_loaded', 'better_images_load_plugin_textdomain' );
-add_action( 'after_setup_theme', 'bi_better_images_after_setup_theme' );
+add_action( 'wp_handle_upload', 'wnbi_wp_handle_upload' );
+add_action( 'plugins_loaded', 'wnbi_plugins_loaded' );
+add_action( 'after_setup_theme', 'wnbi_after_setup_theme' );
 
 // Register activation hook.
 
-register_activation_hook( __FILE__, 'bi_better_images_activate' );
+register_activation_hook( __FILE__, 'wnbi_better_images_activate' );
 
 /**
  * Add a fixed height for the medium_large image size.
  */
-function bi_better_images_after_setup_theme() {
+function wnbi_after_setup_theme() {
 	add_image_size( 'medium_large', 768, 768 );
 }
 
 /**
  * Load the plugin. Do check to see if imagick is installed.
  */
-function bi_better_images_activate() {
+function wnbi_better_images_activate() {
 	if ( ! extension_loaded( 'imagick' ) ) {
 		die( esc_html__( 'Better Images could not be enabled. The required PHP module ImageMagick could not be found. To enable Better Images please contact your web host and ask them to install ImageMagick.', 'better-images' ) );
 	}
@@ -79,22 +79,22 @@ function bi_better_images_activate() {
 /**
  * Load text domain files.
  */
-function better_images_load_plugin_textdomain() {
+function wnbi_plugins_loaded() {
 	load_plugin_textdomain( 'better-images', false, basename( dirname( __FILE__ ) ) . '/languages/' );
 }
 
 /**
  * Init styles.
  */
-function bi_better_images_admin_init() {
-	wp_register_style( 'biBetterImagesStylesheet', plugins_url( 'style.css', __FILE__ ) );
+function wnbi_admin_init() {
+	wp_register_style( 'wnbiBetterImagesStylesheet', plugins_url( 'style.css', __FILE__ ) );
 }
 
 /**
  * Enqueue our stylesheet.
  */
-function bi_better_images_admin_styles() {
-	wp_enqueue_style( 'biBetterImagesStylesheet' );
+function wnbi_better_images_admin_styles() {
+	wp_enqueue_style( 'wnbiBetterImagesStylesheet' );
 }
 
 /**
@@ -103,8 +103,8 @@ function bi_better_images_admin_styles() {
  *
  * @param int $threshold Current threshold.
  */
-function tp_big_image_size_threshold( $threshold ) {
-	$resizing_enabled = ( get_option( 'bi_better_images_resize_image' ) === 'yes' ) ? true : false;
+function wnbi_big_image_size_threshold( $threshold ) {
+	$resizing_enabled = ( get_option( 'wnbi_better_images_resize_image' ) === 'yes' ) ? true : false;
 
 	if ( $resizing_enabled ) {
 		return false;
@@ -116,31 +116,31 @@ function tp_big_image_size_threshold( $threshold ) {
 /**
  * Add the options page.
  */
-function bi_better_images_options_page() {
-	global $bi_settings_page;
+function wnbi_admin_menu() {
+	global $wnbi_settings_page;
 	if ( function_exists( 'add_options_page' ) ) {
-		$bi_settings_page = add_options_page(
+		$wnbi_settings_page = add_options_page(
 			'Better Images',
 			'Better Images',
 			'manage_options',
 			'better-images',
-			'bi_better_images_options'
+			'wnbi_better_images_options'
 		);
 
-		add_action( "admin_print_styles-{$bi_settings_page}", 'bi_better_images_admin_styles' );
+		add_action( "admin_print_styles-{$wnbi_settings_page}", 'wnbi_better_images_admin_styles' );
 	}
 }
 
 /**
  * Define the options page for the plugin.
  */
-function bi_better_images_options() {
-	if ( isset( $_POST['bi-options-update'] ) && isset( $_POST['_wpnonce'] ) ) {
+function wnbi_better_images_options() {
+	if ( isset( $_POST['wnbi-options-update'] ) && isset( $_POST['_wpnonce'] ) ) {
 
 		$wpnonce = sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) );
 
 		if ( ! ( current_user_can( 'manage_options' )
-			&& wp_verify_nonce( $wpnonce, 'bi-options-update' ) )
+			&& wp_verify_nonce( $wpnonce, 'wnbi-options-update' ) )
 		) {
 			wp_die( 'Not authorized' );
 		}
@@ -154,7 +154,7 @@ function bi_better_images_options() {
 		$compression_level = intval( $_POST['quality'] );
 
 		$compression_level = ( '' === $compression_level ) ? 1 : $compression_level;
-		$compression_level = ( ctype_digit( strval( $compression_level ) ) === false ) ? get_option( 'bi_better_images_quality' ) : $compression_level;
+		$compression_level = ( ctype_digit( strval( $compression_level ) ) === false ) ? get_option( 'wnbi_better_images_quality' ) : $compression_level;
 
 		if ( $compression_level < 1 ) {
 			$compression_level = 1;
@@ -163,45 +163,45 @@ function bi_better_images_options() {
 		}
 
 		if ( 'yes' === $resizing_enabled ) {
-			update_option( 'bi_better_images_resize_image', 'yes' );
+			update_option( 'wnbi_better_images_resize_image', 'yes' );
 		} else {
-			update_option( 'bi_better_images_resize_image', 'no' );
+			update_option( 'wnbi_better_images_resize_image', 'no' );
 		}
 
 		if ( 'yes' === $sharpen_image_enabled ) {
-			update_option( 'bi_better_images_sharpen_image', 'yes' );
+			update_option( 'wnbi_better_images_sharpen_image', 'yes' );
 		} else {
-			update_option( 'bi_better_images_sharpen_image', 'no' );
+			update_option( 'wnbi_better_images_sharpen_image', 'no' );
 		}
 
 		if ( 'yes' === $remove_exif_enabled ) {
-			update_option( 'bi_better_images_remove_exif', 'yes' );
+			update_option( 'wnbi_better_images_remove_exif', 'yes' );
 		} else {
-			update_option( 'bi_better_images_remove_exif', 'no' );
+			update_option( 'wnbi_better_images_remove_exif', 'no' );
 		}
 
 		if ( 'yes' === $convert_png_enabled ) {
-			update_option( 'bi_better_images_convert_png', 'yes' );
+			update_option( 'wnbi_better_images_convert_png', 'yes' );
 		} else {
-			update_option( 'bi_better_images_convert_png', 'no' );
+			update_option( 'wnbi_better_images_convert_png', 'no' );
 		}
 
 		if ( 'yes' === $convert_cmyk_enabled ) {
-			update_option( 'bi_better_images_convert_cmyk', 'yes' );
+			update_option( 'wnbi_better_images_convert_cmyk', 'yes' );
 		} else {
-			update_option( 'bi_better_images_convert_cmyk', 'no' );
+			update_option( 'wnbi_better_images_convert_cmyk', 'no' );
 		}
 
-		update_option( 'bi_better_images_quality', $compression_level );
+		update_option( 'wnbi_better_images_quality', $compression_level );
 		echo( '<div id="message" class="updated fade"><p><strong>Changes have been saved.</strong></p></div>' );
 	}
 
-	$compression_level     = intval( get_option( 'bi_better_images_quality' ) );
-	$resizing_enabled      = get_option( 'bi_better_images_resize_image' );
-	$sharpen_image_enabled = get_option( 'bi_better_images_sharpen_image' );
-	$remove_exif_enabled   = get_option( 'bi_better_images_remove_exif' );
-	$convert_png_enabled   = get_option( 'bi_better_images_convert_png' );
-	$convert_cmyk_enabled  = get_option( 'bi_better_images_convert_cmyk' ); ?>
+	$compression_level     = intval( get_option( 'wnbi_better_images_quality' ) );
+	$resizing_enabled      = get_option( 'wnbi_better_images_resize_image' );
+	$sharpen_image_enabled = get_option( 'wnbi_better_images_sharpen_image' );
+	$remove_exif_enabled   = get_option( 'wnbi_better_images_remove_exif' );
+	$convert_png_enabled   = get_option( 'wnbi_better_images_convert_png' );
+	$convert_cmyk_enabled  = get_option( 'wnbi_better_images_convert_cmyk' ); ?>
 
 
 	<div class="wrap">
@@ -311,8 +311,8 @@ function bi_better_images_options() {
 
 			<p class="submit" style="margin-top:10px;border-top:1px solid #eee;padding-top:20px;">
 				<input type="hidden" name="action" value="update" />
-				<?php wp_nonce_field( 'bi-options-update' ); ?>
-				<input id="submit" name="bi-options-update" class="button button-primary" type="submit" value="<?php esc_html_e( 'Save Changes', 'better-images' ); ?>">
+				<?php wp_nonce_field( 'wnbi-options-update' ); ?>
+				<input id="submit" name="wnbi-options-update" class="button button-primary" type="submit" value="<?php esc_html_e( 'Save Changes', 'better-images' ); ?>">
 			</p>
 		</form>
 		<div class="ratings-box">
@@ -343,12 +343,12 @@ function bi_better_images_options() {
  *
  * @param String $file Filename.
  */
-function tp_validate_image( $file ) {
+function wnbi_wp_handle_upload_prefilter( $file ) {
 	tp_debug_log( 'Step 1: Validating uploaded image.' );
 
-	$convert_png_enabled = ( get_option( 'bi_better_images_convert_png' ) === 'yes' ) ? true : false;
+	$convert_png_enabled = ( get_option( 'wnbi_better_images_convert_png' ) === 'yes' ) ? true : false;
 
-	$filename = tp_sanitize_file_name( $file['name'] );
+	$filename = wnbi_sanitize_file_name( $file['name'] );
 
 	// If user uploads a PNG and conversion to JPG is enabled, check for an existng file with JPG extension.
 	if ( file_is_png( $filename ) && $convert_png_enabled ) {
@@ -416,7 +416,7 @@ function does_file_exists( $filename ) {
  *
  * @param  String $filename The filename.
  */
-function tp_sanitize_file_name( $filename ) {
+function wnbi_sanitize_file_name( $filename ) {
 	tp_debug_log( 'Step 2: Sanitizing filename of uploaded image.' );
 
 	$sanitized_filename = remove_accents( $filename ); // Convert to ASCII.
@@ -446,11 +446,11 @@ function tp_sanitize_file_name( $filename ) {
  *
  * @param Object $image_data The image data.
  */
-function tp_handle_uploaded( $image_data ) {
+function wnbi_wp_handle_upload( $image_data ) {
 	tp_debug_log( 'Step 3: Check filetype of uploaded image.' );
 
-	$convert_cmyk_enabled = ( get_option( 'bi_better_images_convert_cmyk' ) === 'yes' ) ? true : false;
-	$convert_png_enabled  = ( get_option( 'bi_better_images_convert_png' ) === 'yes' ) ? true : false;
+	$convert_cmyk_enabled = ( get_option( 'wnbi_better_images_convert_cmyk' ) === 'yes' ) ? true : false;
+	$convert_png_enabled  = ( get_option( 'wnbi_better_images_convert_png' ) === 'yes' ) ? true : false;
 
 	if ( array_key_exists( 'type', $image_data ) && ( 'image/jpeg' !== $image_data['type'] && ( 'image/png' !== $image_data['type'] ) )
 	) {
@@ -476,12 +476,12 @@ function tp_handle_uploaded( $image_data ) {
 			}
 
 			tp_debug_log( 'Image is CMYK. Attempting to convert colorspace to RGB.' );
-			$image = imagick_transform_cmyk_to_rgb( $image );
+			$image = wnbi_imagick_transform_cmyk_to_rgb( $image );
 		}
 
 		if ( $convert_png ) {
 			tp_debug_log( 'Image is PNG and conversion to JPG is enabled. Attempting to convert to JPG.' );
-			$image = imagick_convert_png_to_jpg( $image );
+			$image = wnbi_imagick_convert_png_to_jpg( $image );
 
 			$image_data['file'] = replace_extension( $image_data['file'], 'jpg', true );
 			$image_data['url']  = replace_extension( $image_data['url'], 'jpg', true );
@@ -508,7 +508,7 @@ function tp_handle_uploaded( $image_data ) {
  *
  * @param String $resized_file The filename of the resized file.
  */
-function tp_sharpen_resized_files( $resized_file ) {
+function wnbi_image_make_intermediate_size( $resized_file ) {
 	tp_debug_log( 'Step 4: Sharpen image and remove exif and metadata on upload.' );
 
 	$image = new Imagick( $resized_file );
@@ -520,15 +520,15 @@ function tp_sharpen_resized_files( $resized_file ) {
 
 	list($orig_w, $orig_h, $orig_type) = $size;
 
-	$remove_exif_enabled   = ( get_option( 'bi_better_images_remove_exif' ) === 'yes' ) ? true : false;
-	$sharpen_image_enabled = ( get_option( 'bi_better_images_sharpen_image' ) === 'yes' ) ? true : false;
-	$compression_level     = get_option( 'bi_better_images_quality' );
+	$remove_exif_enabled   = ( get_option( 'wnbi_better_images_remove_exif' ) === 'yes' ) ? true : false;
+	$sharpen_image_enabled = ( get_option( 'wnbi_better_images_sharpen_image' ) === 'yes' ) ? true : false;
+	$compression_level     = get_option( 'wnbi_better_images_quality' );
 
 	if ( $sharpen_image_enabled ) {
 		// We only want to use our sharpening on JPG files.
 		switch ( $orig_type ) {
 			case IMAGETYPE_JPEG:
-				$image = imagick_sharpen_image( $image );
+				$image = wnbi_imagick_sharpen_image( $image );
 				break;
 			default:
 				break;
@@ -537,11 +537,11 @@ function tp_sharpen_resized_files( $resized_file ) {
 
 	if ( $remove_exif_enabled ) {
 		// Strip the Exif data on the image (keep color profile).
-		$image = imagick_strip_exif( $image );
+		$image = wnbi_imagick_strip_exif( $image );
 	}
 
 	// Compress the image.
-	$image = imagick_compress_image( $image, $compression_level );
+	$image = wnbi_imagick_compress_image( $image, $compression_level );
 
 	// Write the final image to disk.
 	$image->writeImage( $resized_file );
@@ -560,7 +560,7 @@ function tp_sharpen_resized_files( $resized_file ) {
  *
  * @param Object $image_data The image data.
  */
-function tp_finialize_upload( $image_data ) {
+function wnbi_wp_generate_attachment_metadata( $image_data ) {
 	tp_debug_log( 'Step 5: Post processing of the uploaded image.' );
 
 	if ( ! array_key_exists( 'file', $image_data ) ) {
@@ -569,11 +569,11 @@ function tp_finialize_upload( $image_data ) {
 		return $image_data;
 	}
 
-	$max_size              = get_option( 'bi_better_images_resize_threshold' ) === 0 ? 0 : get_option( 'bi_better_images_resize_threshold' );
-	$resizing_enabled      = ( get_option( 'bi_better_images_resize_image' ) === 'yes' ) ? true : false;
-	$remove_exif_enabled   = ( get_option( 'bi_better_images_remove_exif' ) === 'yes' ) ? true : false;
-	$sharpen_image_enabled = ( get_option( 'bi_better_images_sharpen_image' ) === 'yes' ) ? true : false;
-	$compression_level     = get_option( 'bi_better_images_quality' );
+	$max_size              = get_option( 'wnbi_better_images_resize_threshold' ) === 0 ? 0 : get_option( 'wnbi_better_images_resize_threshold' );
+	$resizing_enabled      = ( get_option( 'wnbi_better_images_resize_image' ) === 'yes' ) ? true : false;
+	$remove_exif_enabled   = ( get_option( 'wnbi_better_images_remove_exif' ) === 'yes' ) ? true : false;
+	$sharpen_image_enabled = ( get_option( 'wnbi_better_images_sharpen_image' ) === 'yes' ) ? true : false;
+	$compression_level     = get_option( 'wnbi_better_images_quality' );
 
 	// Find the path to the uploaded image.
 	$upload_dir              = wp_upload_dir();
@@ -604,7 +604,7 @@ function tp_finialize_upload( $image_data ) {
 		// We only want to use our sharpening on JPG files.
 		switch ( $orig_type ) {
 			case IMAGETYPE_JPEG:
-				$image = imagick_sharpen_image( $image );
+				$image = wnbi_imagick_sharpen_image( $image );
 				break;
 			default:
 				break;
@@ -613,11 +613,11 @@ function tp_finialize_upload( $image_data ) {
 
 	if ( $remove_exif_enabled ) {
 		// Strip the Exif data on the image (keep color profile).
-		$image = imagick_strip_exif( $image );
+		$image = wnbi_imagick_strip_exif( $image );
 	}
 
 	// Compress the image.
-	$image = imagick_compress_image( $image, $compression_level );
+	$image = wnbi_imagick_compress_image( $image, $compression_level );
 
 	// Write the final image to disk.
 	$image->writeImage( $uploaded_image_location );
@@ -633,7 +633,7 @@ function tp_finialize_upload( $image_data ) {
  *
  * @param Array $sizes The image sizes.
  */
-function tp_display_image_size_names_muploader( $sizes ) {
+function wnbi_image_size_names_choose( $sizes ) {
 	$new_sizes   = array();
 	$added_sizes = get_intermediate_image_sizes();
 
