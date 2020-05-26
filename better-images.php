@@ -23,7 +23,7 @@ $plugin_version = '0.8.1';
 if ( is_admin() && ( get_option( 'wnbi_better_images_version' ) !== $plugin_version ) ) {
 	if ( get_option( 'wnbi_better_images_version' ) !== false ) {
 		update_option( 'wnbi_better_images_version', $plugin_version );
-		tp_debug_log( 'Plugin has been updated.' );
+		wnbi_debug_log( 'Plugin has been updated.' );
 	} else {
 		add_option( 'wnbi_better_images_version', $plugin_version );
 	}
@@ -344,7 +344,7 @@ function wnbi_better_images_options() {
  * @param String $file Filename.
  */
 function wnbi_wp_handle_upload_prefilter( $file ) {
-	tp_debug_log( 'Step 1: Validating uploaded image.' );
+	wnbi_debug_log( 'Step 1: Validating uploaded image.' );
 
 	$convert_png_enabled = ( get_option( 'wnbi_better_images_convert_png' ) === 'yes' ) ? true : false;
 
@@ -352,13 +352,13 @@ function wnbi_wp_handle_upload_prefilter( $file ) {
 
 	// If user uploads a PNG and conversion to JPG is enabled, check for an existng file with JPG extension.
 	if ( file_is_png( $filename ) && $convert_png_enabled ) {
-		tp_debug_log( 'Filetype is PNG. Image will be converted to JPG. Checkif if file with JPG extension exists.' );
+		wnbi_debug_log( 'Filetype is PNG. Image will be converted to JPG. Checkif if file with JPG extension exists.' );
 		$filename = replace_extension( $filename, 'jpg', false );
 	}
 
 	if ( does_file_exists( $filename ) ) {
 		$file['error'] = __( 'The file you are trying to upload already exists.', 'better-images' );
-		tp_debug_log( 'File already exists, aborting upload.' );
+		wnbi_debug_log( 'File already exists, aborting upload.' );
 	}
 
 	return $file;
@@ -417,7 +417,7 @@ function does_file_exists( $filename ) {
  * @param  String $filename The filename.
  */
 function wnbi_sanitize_file_name( $filename ) {
-	tp_debug_log( 'Step 2: Sanitizing filename of uploaded image.' );
+	wnbi_debug_log( 'Step 2: Sanitizing filename of uploaded image.' );
 
 	$sanitized_filename = remove_accents( $filename ); // Convert to ASCII.
 
@@ -447,14 +447,14 @@ function wnbi_sanitize_file_name( $filename ) {
  * @param Object $image_data The image data.
  */
 function wnbi_wp_handle_upload( $image_data ) {
-	tp_debug_log( 'Step 3: Check filetype of uploaded image.' );
+	wnbi_debug_log( 'Step 3: Check filetype of uploaded image.' );
 
 	$convert_cmyk_enabled = ( get_option( 'wnbi_better_images_convert_cmyk' ) === 'yes' ) ? true : false;
 	$convert_png_enabled  = ( get_option( 'wnbi_better_images_convert_png' ) === 'yes' ) ? true : false;
 
 	if ( array_key_exists( 'type', $image_data ) && ( 'image/jpeg' !== $image_data['type'] && ( 'image/png' !== $image_data['type'] ) )
 	) {
-		tp_debug_log( 'Not a supported image format or no image, skipping. Type: ' . $image_data['type'] );
+		wnbi_debug_log( 'Not a supported image format or no image, skipping. Type: ' . $image_data['type'] );
 		return $image_data;
 	}
 
@@ -471,16 +471,16 @@ function wnbi_wp_handle_upload( $image_data ) {
 		if ( $is_cmyk ) {
 
 			if ( ! $convert_cmyk_enabled ) {
-				tp_debug_log( 'Conversion to CMYK disabled, will not check for CMYK colorspace on image, proceeding.' );
+				wnbi_debug_log( 'Conversion to CMYK disabled, will not check for CMYK colorspace on image, proceeding.' );
 				return $image_data;
 			}
 
-			tp_debug_log( 'Image is CMYK. Attempting to convert colorspace to RGB.' );
+			wnbi_debug_log( 'Image is CMYK. Attempting to convert colorspace to RGB.' );
 			$image = wnbi_imagick_transform_cmyk_to_rgb( $image );
 		}
 
 		if ( $convert_png ) {
-			tp_debug_log( 'Image is PNG and conversion to JPG is enabled. Attempting to convert to JPG.' );
+			wnbi_debug_log( 'Image is PNG and conversion to JPG is enabled. Attempting to convert to JPG.' );
 			$image = wnbi_imagick_convert_png_to_jpg( $image );
 
 			$image_data['file'] = replace_extension( $image_data['file'], 'jpg', true );
@@ -495,7 +495,7 @@ function wnbi_wp_handle_upload( $image_data ) {
 		$image->destroy();
 
 		if ( $convert_png ) {
-			tp_debug_log( 'Unlinking old PNG file: ' . $old_png_file );
+			wnbi_debug_log( 'Unlinking old PNG file: ' . $old_png_file );
 			unlink( $old_png_file );
 		}
 	}
@@ -509,13 +509,13 @@ function wnbi_wp_handle_upload( $image_data ) {
  * @param String $resized_file The filename of the resized file.
  */
 function wnbi_image_make_intermediate_size( $resized_file ) {
-	tp_debug_log( 'Step 4: Sharpen image and remove exif and metadata on upload.' );
+	wnbi_debug_log( 'Step 4: Sharpen image and remove exif and metadata on upload.' );
 
 	$image = new Imagick( $resized_file );
 	$size  = @getimagesize( $resized_file );
 
 	if ( ! $size ) {
-		return new WP_Error( 'invalid_image', __( 'Could not read image size.', 'better-images' ), $file );
+		return new WP_Error( 'invalid_image', __( 'Could not read image size.', 'better-images' ), $resized_file );
 	}
 
 	list($orig_w, $orig_h, $orig_type) = $size;
@@ -561,7 +561,7 @@ function wnbi_image_make_intermediate_size( $resized_file ) {
  * @param Object $image_data The image data.
  */
 function wnbi_wp_generate_attachment_metadata( $image_data ) {
-	tp_debug_log( 'Step 5: Post processing of the uploaded image.' );
+	wnbi_debug_log( 'Step 5: Post processing of the uploaded image.' );
 
 	if ( ! array_key_exists( 'file', $image_data ) ) {
 
@@ -583,7 +583,7 @@ function wnbi_wp_generate_attachment_metadata( $image_data ) {
 	$size  = @getimagesize( $uploaded_image_location );
 
 	if ( ! $size ) {
-		return new WP_Error( 'invalid_image', __( 'Could not read image size.', 'better-images' ), $file );
+		return new WP_Error( 'invalid_image', __( 'Could not read image size.', 'better-images' ), $image_data['file'] );
 	}
 
 	list($orig_w, $orig_h, $orig_type) = $size;
@@ -595,9 +595,9 @@ function wnbi_wp_generate_attachment_metadata( $image_data ) {
 		$image_data['width']  = $image->getImageWidth();
 		$image_data['height'] = $image->getImageHeight();
 
-		tp_debug_log( 'Image downsized. New image width: ' . $image->getImageWidth() . '. New image height: ' . $image->getImageHeight() . '.' );
+		wnbi_debug_log( 'Image downsized. New image width: ' . $image->getImageWidth() . '. New image height: ' . $image->getImageHeight() . '.' );
 	} else {
-		tp_debug_log( 'No resizing of image was needed or re-sizing not enabled. Skipping.' );
+		wnbi_debug_log( 'No resizing of image was needed or re-sizing not enabled. Skipping.' );
 	}
 
 	if ( $sharpen_image_enabled ) {
@@ -654,7 +654,7 @@ function wnbi_image_size_names_choose( $sizes ) {
  *
  * @param String $message The debug message.
  */
-function tp_debug_log( $message ) {
+function wnbi_debug_log( $message ) {
 	global $debug_logger;
 
 	if ( $debug_logger ) {

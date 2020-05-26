@@ -16,7 +16,7 @@ function wnbi_imagick_sharpen_image( $image ) {
 	// Sharpen the image (the default is via the Lanczos algorithm).
 	$image->unsharpMaskImage( 0, 0.6, 1.4, 0 );
 
-	tp_debug_log( 'Image has been sharpened.' );
+	wnbi_debug_log( 'Image has been sharpened.' );
 	return $image;
 }
 
@@ -54,10 +54,13 @@ function wnbi_imagick_strip_exif( $image ) {
 	if ( $has_icc_profile ) {
 		$image->profileImage( 'icc', $profiles['icc'] );
 	} else {
-		tp_debug_log( 'Warning: No color profile found on image.' );
+		wnbi_debug_log( 'Warning: No color profile found on image.' );
+		// We may want to add a color profile in the upcoming releases.
+        // $icc_rgb = file_get_contents( plugin_dir_path( __FILE__ ) . 'sRGB-IEC61966-2.1.icc' );
+        // $image->profileImage( 'icc', $icc_rgb );
 	}
 
-	tp_debug_log( 'Image has been stripped of exif information.' );
+	wnbi_debug_log( 'Image has been stripped of exif information.' );
 	return $image;
 }
 
@@ -88,7 +91,7 @@ function wnbi_imagick_transform_cmyk_to_rgb( $image ) {
 
 	if ( false === $has_icc_profile ) {
 		$icc_cmyk = file_get_contents( plugin_dir_path( __FILE__ ) . 'USWebUncoated.icc' );
-		$img->profileImage( 'icc', $icc_cmyk );
+        $image->profileImage( 'icc', $icc_cmyk );
 		unset( $icc_cmyk );
 	}
 
