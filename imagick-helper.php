@@ -11,7 +11,7 @@
  * @param Imagick $image The imagick image.
  * @return Imagick The sharpened image.
  */
-function imagick_sharpen_image( $image ) {
+function wnbi_imagick_sharpen_image( $image ) {
 
 	// Sharpen the image (the default is via the Lanczos algorithm).
 	$image->unsharpMaskImage( 0, 0.6, 1.4, 0 );
@@ -27,7 +27,7 @@ function imagick_sharpen_image( $image ) {
  * @param Number  $compression_level The compression level.
  * @return Imagick The sharpened image.
  */
-function imagick_compress_image( $image, $compression_level ) {
+function wnbi_imagick_compress_image( $image, $compression_level ) {
 
 	// Store the JPG file with the compression level specified by the user (or default).
 	$image->setImageFormat( 'jpg' );
@@ -44,7 +44,7 @@ function imagick_compress_image( $image, $compression_level ) {
  * @param Imagick $image The imagick image.
  * @return Imagick The sharpened image.
  */
-function imagick_strip_exif( $image ) {
+function wnbi_imagick_strip_exif( $image ) {
 
 	// Strip Exif data but keep the color profile.
 	$profiles        = $image->getImageProfiles( 'icc', true );
@@ -67,7 +67,7 @@ function imagick_strip_exif( $image ) {
  * @param Imagick $image The image file.
  * @return Imagick The converted image.
  */
-function imagick_convert_png_to_jpg( $image ) {
+function wnbi_imagick_convert_png_to_jpg( $image ) {
 	$image->setImageBackgroundColor( 'white' );
 	$image = $image->mergeImageLayers( Imagick::LAYERMETHOD_FLATTEN );
 	$image->setImageFormat( 'jpg' );
@@ -81,7 +81,7 @@ function imagick_convert_png_to_jpg( $image ) {
  * @param Imagick $image The imagick image.
  * @return Imagick The sharpened image.
  */
-function imagick_transform_cmyk_to_rgb( $image ) {
+function wnbi_imagick_transform_cmyk_to_rgb( $image ) {
 
 	$profiles        = $image->getImageProfiles( '*', false );
 	$has_icc_profile = ( array_search( 'icc', $profiles ) !== false );
