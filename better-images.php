@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Better Images
  * Description: Just upload your images and this plugin will resize, sharpen, compress, convert and optimize them to produce images that are both better looking and smaller in size. And it will also resize the original full resolution image to save space.
- * Version: 0.8.1
+ * Version: 0.8.2
  * Text Domain: better-images
  * Domain Path: /languages
  * Author: Webbson AB
@@ -16,16 +16,16 @@ defined( 'ABSPATH' ) || die( 'No script kiddies please!' );
 
 require 'imagick-helper.php';
 
-$debug_logger   = false;
-$plugin_version = '0.8.1';
+$wnbi_debug_logger   = false;
+$wnbi_plugin_version = '0.8.2';
 
 // Default plugin values.
-if ( is_admin() && ( get_option( 'wnbi_better_images_version' ) !== $plugin_version ) ) {
+if ( is_admin() && ( get_option( 'wnbi_better_images_version' ) !== $wnbi_plugin_version ) ) {
 	if ( get_option( 'wnbi_better_images_version' ) !== false ) {
-		update_option( 'wnbi_better_images_version', $plugin_version );
+		update_option( 'wnbi_better_images_version', $wnbi_plugin_version );
 		wnbi_debug_log( 'Plugin has been updated.' );
 	} else {
-		add_option( 'wnbi_better_images_version', $plugin_version );
+		add_option( 'wnbi_better_images_version', $wnbi_plugin_version );
 	}
 
 	add_option( 'wnbi_better_images_resize_threshold', '2560' );
@@ -351,12 +351,12 @@ function wnbi_wp_handle_upload_prefilter( $file ) {
 	$filename = wnbi_sanitize_file_name( $file['name'] );
 
 	// If user uploads a PNG and conversion to JPG is enabled, check for an existng file with JPG extension.
-	if ( file_is_png( $filename ) && $convert_png_enabled ) {
+	if ( wnbi_file_is_png( $filename ) && $convert_png_enabled ) {
 		wnbi_debug_log( 'Filetype is PNG. Image will be converted to JPG. Checkif if file with JPG extension exists.' );
-		$filename = replace_extension( $filename, 'jpg', false );
+		$filename = wnbi_replace_extension( $filename, 'jpg', false );
 	}
 
-	if ( does_file_exists( $filename ) ) {
+	if ( wnbi_does_file_exists( $filename ) ) {
 		$file['error'] = __( 'The file you are trying to upload already exists.', 'better-images' );
 		wnbi_debug_log( 'File already exists, aborting upload.' );
 	}
@@ -372,7 +372,7 @@ function wnbi_wp_handle_upload_prefilter( $file ) {
  * @param String  $new_extension The new extenstion.
  * @param Boolean $include_dir Include the path in the response.
  */
-function replace_extension( $filename, $new_extension, $include_dir ) {
+function wnbi_replace_extension( $filename, $new_extension, $include_dir ) {
 	$info = pathinfo( $filename );
 
 	if ( $include_dir ) {
@@ -387,7 +387,7 @@ function replace_extension( $filename, $new_extension, $include_dir ) {
  *
  * @param String $filename Filename.
  */
-function file_is_png( $filename ) {
+function wnbi_file_is_png( $filename ) {
 	$ext = pathinfo( $filename, PATHINFO_EXTENSION );
 	return ( gettype( $ext ) === 'string' ) && ( strtoupper( $ext ) === 'PNG' );
 }
@@ -398,7 +398,7 @@ function file_is_png( $filename ) {
  * @param  String $filename The filename to check for.
  * @return Boolean If file exists, true, otherwise false.
  */
-function does_file_exists( $filename ) {
+function wnbi_does_file_exists( $filename ) {
 	global $wpdb;
 
 	return intval(
@@ -461,7 +461,7 @@ function wnbi_wp_handle_upload( $image_data ) {
 	$image   = getimagesize( $image_data['file'] );
 	$is_cmyk = array_key_exists( 'channels', $image ) && 4 === $image['channels'];
 
-	$convert_png = file_is_png( $image_data['file'] ) && $convert_png_enabled;
+	$convert_png = wnbi_file_is_png( $image_data['file'] ) && $convert_png_enabled;
 
 	// Check if image is CMYK or if we should convert a PNG to JPG.
 	if ( $is_cmyk || $convert_png ) {
@@ -483,8 +483,8 @@ function wnbi_wp_handle_upload( $image_data ) {
 			wnbi_debug_log( 'Image is PNG and conversion to JPG is enabled. Attempting to convert to JPG.' );
 			$image = wnbi_imagick_convert_png_to_jpg( $image );
 
-			$image_data['file'] = replace_extension( $image_data['file'], 'jpg', true );
-			$image_data['url']  = replace_extension( $image_data['url'], 'jpg', true );
+			$image_data['file'] = wnbi_replace_extension( $image_data['file'], 'jpg', true );
+			$image_data['url']  = wnbi_replace_extension( $image_data['url'], 'jpg', true );
 			$image_data['type'] = 'image/jpeg';
 		}
 
@@ -655,9 +655,9 @@ function wnbi_image_size_names_choose( $sizes ) {
  * @param String $message The debug message.
  */
 function wnbi_debug_log( $message ) {
-	global $debug_logger;
+	global $wnbi_debug_logger;
 
-	if ( $debug_logger ) {
+	if ( $wnbi_debug_logger ) {
 		error_log( print_r( $message, true ) );
 	}
 }

@@ -142,6 +142,6 @@ Yes, that is possible. However, the images will be regenerated from the compress
 Yes that is possible, but, Better Images is meant to make image editing a thing of the past. Since WordPress is using responsive image handling there are no reasons to manually resize images. Also keep in mind that the resizing will happen from an already compressed and resized image.
 
 == Changelog ==
-### 0.8.1
+### 0.8.2
 
 Beta release.
