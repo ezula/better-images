@@ -1,8 +1,9 @@
-=== Better Images - Sharpen, compress, optimize and resize original full image ===
+=== Better Images - Sharpen, compress, optimize and resize image after upload ===
 Contributors: hemenderki, svunz, charliederki
 Tags: images, image, sharpen, sharpening, compress, compression, optimize, optimization, resize, resizing, original image, full image
 Requires at least: 5.3
 Tested up to: 5.4.1
+Stable tag: 0.8.2
 Requires PHP: 5.6
 License: GPLv2
 
@@ -11,38 +12,40 @@ Tired of resizing, compressing, converting, optimizing and exporting images? Thi
 == Description ==
 NOTE: Better Images only works with ImageMagick, not with GD. Install this plugin to check if you have ImageMagick installed.
 
-Tired of resizing, compressing, converting, optimizing and exporting images over and over again? Better Images is a plugin that automagically does this hard work for you. Just drag and drop your image into the media library and the plugin will produce an image that is both better looking and smaller in size. And it will also resize the original full resolution image to save space.
+Tired of resizing, compressing, converting, optimizing and exporting images over and over again? Better Images is a plugin that automagically does this hard work for you. Just upload your image into the media library and the plugin will produce an image that is both better looking and smaller in size. And it will also resize the original full resolution image to save space.
 
-## Here\'s everything that Better Images will do for you every time you upload an image:
+## Here's everything that Better Images will do for you every time you upload an image:
 
-- Checks if the image already exist to avoid duplicates
-- Replaces special characters and non english letters in the filename
+- Resizes and compresses the original full resolution image
+- Sharpens the image to make it more appealing and crisp
 - Removes EXIF data but keeps color space profile
 - Converts from PNG to JPG
 - Converts from CMYK to RGB
-- Sharpens the image to make it more appealing and crisp
-- Resizes and compresses the original full resolution image
-- Displays all image sizes in the editing screen
+- Checks if the image already exist to avoid duplicates
+- Replaces special characters and non english letters in the filename
+- Adds a max height of 768 pixels to medium_large size variant
 
-## And here\'s the nitty-gritty of what is actually happening in the background:
+And one bonus feature: It displays all image sizes in the editing screen
 
-### Checks if the image already exist to avoid duplicates
+## And here's the nitty-gritty of what is actually happening in the background:
 
-One of the things that will take unnecessary space from your server is uploading the same image multiple times. Often times we forget that we already uploaded the image once before, so we upload it again. WordPress by default won\'t warn you that you are about to upload a duplicate image. Instead it puts a number in the filename and lets the image pass.
+### Resizes and compresses the original full resolution image
 
-With Better Images every time you upload a file it will search the database to see if the image already exist and give you a message to make you aware of that and help you avoid uploading duplicates of the same image.
+In version 5.3 WordPress introduced handling of big images. The solution that was implemented is to create a new size variant of 2560 pixels with the addition of the word "scaled" in the filename. This variant serves as the new full size image on the website. The real original full size image though is not deleted but kept on the server in case one would want to resize to a different size or regenerate thumbnails. This image is never used on the website however and resizing images to pixel perfect sizes is a thing of the past due to the advent of responsive image handling.
 
-### Replaces speci**al characters and non** english letters in the filename
+What Better Images does is resizing the original full size image to the maximum size of 2560 pixels replacing the default scaled variant. In the process we also get rid of the word "scaled" in the filename.
 
-WordPress will allow you to upload images with special characters and non english letters in the filename. Everything will work properly. Until that is you decide to move your website or restore it from a backup. Suddenly all image links with special characters and non english letters will break and you will have to reassign these images in all pages and posts manually.
+### Sharpens the image to make it more appealing and crisp
 
-To protect you from that Better Images will clean up and replace all special characters and non english letters in the filename for you.
+Every time we resize an image it becomes blurry. Apps like Photoshop, Pixelmator, Affinity Photo and the like will compensate this by applying som degree of sharpening to make images look better. WordPress does not do that and that's why we end up with blurry images.
+
+However Better Images does that for you. We have tweaked the sharpening level to avoid over sharpening artifacts. The plugin applies the perfect amount of sharpening to make your images pop and look at their best.
 
 ### Removes EXIF data but keeps color space profile
 
-Almost all images taken with a camera or downloaded from a stock photo library has EXIF data embedded in them. EXIF data is information about shutter speed, exposure compensation, aperture speed, what metering system, if a flash was used, ISO number, date and time the image was taken, whitebalance, GPS coordinates and so on. This data is in the majority of time not used or needed on a website. Therefore we remove the EXIF data and shave off up to 30 kb from the file size.
+Almost all images taken with a camera or downloaded from a stock photo library has EXIF data embedded in them. EXIF data is information about shutter speed, exposure compensation, aperture speed, what metering system, if a flash was used, ISO number, date and time the image was taken, white balance, GPS coordinates and so on. This data is in the majority of time not used or needed on a website. Therefore we remove the EXIF data and shave off up to 30 kb from the file size.
 
-Removing the EXIF data however also removes the color space profile which will result in an image that looks different form the original. Since we wouldn\'t want that we leave the color space profile untouched.
+Removing the EXIF data however also removes the color space profile which will result in an image that looks different form the original. Since we wouldn't want that we leave the color space profile untouched.
 
 ### Converts from PNG to JPG
 
@@ -52,21 +55,25 @@ Better Images can convert uploaded PNG image to JPG for you. This will not only 
 
 ### Converts from CMYK to RGB
 
-Sometimes you will get an image that\'s exported to be used in print and therefore it uses the CMYK color mode. WordPress is not that great at handling this so it will create multiple variants of the image in different sizes, each of them weighing in at the same size in mega byte as the original full size image. That\'s crazy!
+Sometimes you will get an image that's exported to be used in print and therefore it uses the CMYK color mode. WordPress is not that great at handling this so it will create multiple variants of the image in different sizes, each of them weighing in at the same size in mega byte as the original full size image. That's crazy!
 
 Better Images solves this by converting the image to RGB mode before any resizing or compression occurs.
 
-### Sharpens the image to make it more appealing and crisp
+### Checks if the image already exist to avoid duplicates
 
-Every time we resize an image it becomes blurry. Apps like Photoshop, Pixelmator, Affinity Photo and the like will compensate this by applying som degree of sharpening to make images look better. WordPress does not do that and that\'s why we end up with blurry images.
+One of the things that will take unnecessary space from your server is uploading the same image multiple times. Often times we forget that we already uploaded the image once before, so we upload it again. WordPress by default won't warn you that you are about to upload a duplicate image. Instead it puts a number in the filename and lets the image pass.
 
-However Better Images does that for you. We have tweaked the sharpening level to avoid over sharpening artifacts. The plugin applies the perfect amount of sharpening to make your images pop and look at their best.
+With Better Images every time you upload a file it will search the database to see if the image already exist and give you a message to make you aware of that and help you avoid uploading duplicates of the same image.
 
-### Resizes and compresses the original full resolution image
+### Replaces special characters and non english letters in the filename
 
-In version 5.3 WordPress introduced handling of big images. The solution that was implemented is to create a new size variant of 2560 pixels with the addition of the word \"scaled\" in the filename. This variant serves as the new full size image on the website. The real original full size image though is not deleted but kept on the server in case one would want to resize to a different size or regenerate thumbnails. This image is never used on the website however and resizing images to pixel perfect sizes is a thing of the past due to the advent of responsive image handling.
+WordPress will allow you to upload images with special characters and non english letters in the filename. Everything will work properly. Until that is you decide to move your website or restore it from a backup. Suddenly all image links with special characters and non english letters will break and you will have to reassign these images in all pages and posts manually.
 
-What Better Images does is resizing the original full size image to the maximum size of 2560 pixels replacing the default scaled variant. In the process we also get rid of the word \"scaled\" in the filename.
+To protect you from that Better Images will clean up and replace all special characters and non english letters in the filename for you.
+
+### Adds a max height of 768 pixels to medium_large size variant.
+
+The 768 pixel size variant, also called medium_large, was added into WordPress back in the days when responsive image handling where just introduced. The idea was to have an image size that covers mobile phones. The size is not visible in the Media settings panel and it's the only size variant that does not have any hight limit. That means in practice this size can be larger than the 1024 pixel size if the image is very tall. Since those days a lot has happened and we think that medium_large also should have a height limit just as all other size variants, so we added this feature.
 
 ### Displays all image sizes in the editing screen
 
@@ -89,8 +96,8 @@ Better Images will display and let you choose from all these sizes. This is also
 All features are enabled by default and most of them can be disabled when needed. Let say for example you are doing a downloads page with press images and want to have full sized images in CMYK mode. No problem, just turn off the setting for CMYK conversion and full resolution image resizing.
 
 == Installation ==
-1. Visit the plugins page within your dashboard and select \"Add New\".
-2. Search for \"Better Images\"
+1. Visit the plugins page within your dashboard and select "Add New".
+2. Search for "Better Images"
 3. Activate Better Images from your plugins page.
 
 == Frequently Asked Questions ==
@@ -106,7 +113,7 @@ No, Better Images does not work with GD. For the plugin to work you will need Im
 
 You can find that out by installing this plugin and go to Settings > Better Images. If you see an error massage and no settings then you do not have ImageMagic.
 
-= What if I don\'t have GD on my server? =
+= What if I don't have GD on my server? =
 
 Then we would recommend contacting your hosting company and ask them to activate ImageMagick for you.
 
@@ -137,11 +144,16 @@ The full size original image is resized  to a maximum of 2560 pixels. If the upl
 
 Yes, that is possible. However, the images will be regenerated from the compressed 2560 pixel image, not the original full size image since that images does not exist anymore.
 
-= Can I edit and resize the image i I use Better Images? =
+= Can I edit and resize the image if I use Better Images? =
 
 Yes that is possible, but, Better Images is meant to make image editing a thing of the past. Since WordPress is using responsive image handling there are no reasons to manually resize images. Also keep in mind that the resizing will happen from an already compressed and resized image.
 
 == Changelog ==
+
+### 0.8.3
+
+Minor tweaks and fixed a few typos.
+
 ### 0.8.2
 
 Beta release.
