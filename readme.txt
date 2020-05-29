@@ -3,7 +3,7 @@ Contributors: hemenderki, svunz, charliederki
 Tags: images, image, sharpen, sharpening, compress, compression, optimize, optimization, resize, resizing, original image, full image
 Requires at least: 5.3
 Tested up to: 5.4.1
-Stable tag: 0.8.2
+Stable tag: 1.0.0
 Requires PHP: 5.6
 License: GPLv2
 
@@ -25,7 +25,7 @@ Tired of resizing, compressing, converting, optimizing and exporting images over
 - Replaces special characters and non english letters in the filename
 - Adds a max height of 768 pixels to medium_large size variant
 
-And one bonus feature: It displays all image sizes in the editing screen
+And one bonus feature: It displays all image sizes in the editing screen.
 
 ## And here's the nitty-gritty of what is actually happening in the background:
 
@@ -101,6 +101,10 @@ All features are enabled by default and most of them can be disabled when needed
 3. Activate Better Images from your plugins page.
 
 == Frequently Asked Questions ==
+= Is Better Images free? =
+
+Yes, Better Images is free and will always be. This is our thank you to the awesome WordPress community.
+
 = Should I compress and resize my images before uploading? =
 
 No, Better Images will do that for you. In fact uploading a compressed and resized image will make the final result look worse and in some cases the file size will be larger. You should always upload the original uncompressed full size image and let Better Images do the rest.
@@ -149,6 +153,10 @@ Yes, that is possible. However, the images will be regenerated from the compress
 Yes that is possible, but, Better Images is meant to make image editing a thing of the past. Since WordPress is using responsive image handling there are no reasons to manually resize images. Also keep in mind that the resizing will happen from an already compressed and resized image.
 
 == Changelog ==
+
+### 1.0.0
+
+First stable release! :)
 
 ### 0.8.3
 
