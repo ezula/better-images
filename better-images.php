@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Better Images
  * Description: Just upload your images and this plugin will resize, sharpen, compress, convert and optimize them to produce images that are both better looking and smaller in size. And it will also resize the original full resolution image to save space.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Text Domain: better-images
  * Domain Path: /languages
  * Author: Webbson AB
@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || die( 'No script kiddies please!' );
 require 'imagick-helper.php';
 
 $wnbi_debug_logger   = false;
-$wnbi_plugin_version = '1.0.0';
+$wnbi_plugin_version = '1.0.1';
 
 // Default plugin values.
 if ( is_admin() && ( get_option( 'wnbi_better_images_version' ) !== $wnbi_plugin_version ) ) {
@@ -393,7 +393,7 @@ function wnbi_file_is_png( $filename ) {
 }
 
 /**
- * Check if a give file exists in the uploads folder or not.
+ * Check if a given file exists in the uploads folder or not.
  *
  * @param  String $filename The filename to check for.
  * @return Boolean If file exists, true, otherwise false.
@@ -403,8 +403,12 @@ function wnbi_does_file_exists( $filename ) {
 
 	return intval(
 		$wpdb->get_var(
-			"SELECT post_id FROM {$wpdb->postmeta} 
-		WHERE meta_key = '_wp_attached_file' AND meta_value LIKE '%{$filename}'"
+			$wpdb->prepare("
+				SELECT post_id
+				FROM {$wpdb->postmeta}
+				WHERE meta_key = '_wp_attached_file' AND meta_value LIKE %s",
+				"%{$filename}"
+			)
 		)
 	);
 }

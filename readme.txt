@@ -3,16 +3,18 @@ Contributors: hemenderki, svunz, charliederki
 Tags: images, image, sharpen, sharpening, compress, compression, optimize, optimization, resize, resizing, original image, full image
 Requires at least: 5.3
 Tested up to: 5.4.1
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 Requires PHP: 5.6
 License: GPLv2
 
 Tired of resizing, compressing, converting, optimizing and exporting images? This plugin will automagically do this hard work for you.
 
 == Description ==
-NOTE: Better Images only works with ImageMagick, not with GD. Install this plugin to check if you have ImageMagick installed.
+NOTE: Better Images only works with ImageMagick, not with GD. Install this plugin to check if you have ImageMagick installed. Read more in the FAQ section below.
 
 Tired of resizing, compressing, converting, optimizing and exporting images over and over again? Better Images is a plugin that automagically does this hard work for you. Just upload your image into the media library and the plugin will produce an image that is both better looking and smaller in size. And it will also resize the original full resolution image to save space.
+
+If you benefit from this plugin please consider [writing a review](https://wordpress.org/support/plugin/better-images/reviews/#new-post)! That would mean a lot for us.
 
 ## Here's everything that Better Images will do for you every time you upload an image:
 
@@ -109,9 +111,13 @@ Yes, Better Images is free and will always be. This is our thank you to the awes
 
 No, Better Images will do that for you. In fact uploading a compressed and resized image will make the final result look worse and in some cases the file size will be larger. You should always upload the original uncompressed full size image and let Better Images do the rest.
 
+= What is ImageMagick and GD? =
+
+ImageMagick (also called Imagick) and GD are two different suits of tools for image manipulation that don't have any graphical interface. Instead the different tools are utilized by code. Most web hosts have one of them and som let you choose. Test has shown that ImageMagick produce better results and has more features. 
+
 = Does this plugin work with GD? =
 
-No, Better Images does not work with GD. For the plugin to work you will need ImageMagick installed on the server.
+No, Better Images does not work with GD. For the plugin to work you will need ImageMagick installed on the server. 
 
 = How can I check if I have ImageMagick installed on my server? =
 
@@ -119,7 +125,7 @@ You can find that out by installing this plugin and go to Settings > Better Imag
 
 = What if I don't have GD on my server? =
 
-Then we would recommend contacting your hosting company and ask them to activate ImageMagick for you.
+Then we would recommend contacting your hosting company and ask them if they can activate ImageMagick for you.
 
 = Does Better Images support responsive images =
 
@@ -152,7 +158,15 @@ Yes, that is possible. However, the images will be regenerated from the compress
 
 Yes that is possible, but, Better Images is meant to make image editing a thing of the past. Since WordPress is using responsive image handling there are no reasons to manually resize images. Also keep in mind that the resizing will happen from an already compressed and resized image.
 
+== Screenshots ==
+
+1. The settings panel
+
 == Changelog ==
+
+### 1.0.1
+
+Update readme and some minor fixes.
 
 ### 1.0.0
 
