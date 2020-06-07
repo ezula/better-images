@@ -3,7 +3,7 @@ Contributors: hemenderki, svunz, charliederki
 Tags: images, image, sharpen, sharpening, compress, compression, optimize, optimization, resize, resizing, original image, full image
 Requires at least: 5.3
 Tested up to: 5.4.1
-Stable tag: 1.0.1
+Stable tag: 1.1.0
 Requires PHP: 5.6
 License: GPLv2
 
@@ -163,6 +163,10 @@ Yes that is possible, but, Better Images is meant to make image editing a thing 
 1. The settings panel
 
 == Changelog ==
+
+### 1.1.0
+
+Remove settings when uninstalled and language fixes.
 
 ### 1.0.1
 

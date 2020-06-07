@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Better Images\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/better-images\n"
-"POT-Creation-Date: 2020-05-23T19:38:21+00:00\n"
-"PO-Revision-Date: 2020-05-28 21:03+0200\n"
+"POT-Creation-Date: 2020-06-06T21:21:56+00:00\n"
+"PO-Revision-Date: 2020-06-06 23:26+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: sv_SE\n"
@@ -46,7 +46,7 @@ msgstr "Webbson AB"
 msgid "https://webbson.se"
 msgstr "https://webbson.se"
 
-#: better-images.php:72
+#: better-images.php:75
 msgid ""
 "Better Images could not be enabled. The required PHP module ImageMagick "
 "could not be found. To enable Better Images please contact your web host and "
@@ -56,7 +56,7 @@ msgstr ""
 "som krävs. För att aktivera Better Images kontakta ditt webbhotell och be "
 "dem att installera ImageMagick."
 
-#: better-images.php:210
+#: better-images.php:213
 msgid ""
 "Tired of resizing, compressing, converting, optimizing and exporting images "
 "over and over again? Better Images is a plugin that automagically does this "
@@ -72,32 +72,32 @@ msgstr ""
 "storlek. Och det kommer också att förminska den ursprungliga orginilabilden "
 "för att spara utrymme."
 
-#: better-images.php:216
+#: better-images.php:219
 msgid "Settings"
 msgstr "Inställningar"
 
-#: better-images.php:218
+#: better-images.php:221
 msgid ""
 "Here's everything the plugin will do for you every time you upload an image."
 msgstr ""
 "Här är allt som pluginet kommer att göra för dig varje gång du laddar upp en "
 "bild."
 
-#: better-images.php:222
+#: better-images.php:225
 msgid "Resize and compress the original full resolution image"
 msgstr "Ändra storlek på och komprimera originalbilden"
 
-#: better-images.php:225 better-images.php:252 better-images.php:264
-#: better-images.php:276 better-images.php:288
+#: better-images.php:228 better-images.php:255 better-images.php:267
+#: better-images.php:279 better-images.php:291
 msgid "Yes"
 msgstr "Ja"
 
-#: better-images.php:226 better-images.php:253 better-images.php:265
-#: better-images.php:277 better-images.php:289
+#: better-images.php:229 better-images.php:256 better-images.php:268
+#: better-images.php:280 better-images.php:292
 msgid "No"
 msgstr "Nej"
 
-#: better-images.php:230
+#: better-images.php:233
 msgid ""
 "Resizes and compresses the uploaded image to the maximum size of 2560 "
 "pixels. If the uploaded image is smaller than 2560 pixels it will be "
@@ -109,50 +109,45 @@ msgstr ""
 "men behåller sin ursprungliga storlek. Detta är kärnan i pluginet och kan "
 "därför inte inaktiveras."
 
-#: better-images.php:234
+#: better-images.php:237
 msgid "JPEG quality"
 msgstr "JPEG-kvalitet"
 
-#: better-images.php:243
+#: better-images.php:246
 msgid ""
 "We have tweaked the plugin to give you the best balance between quality and "
 "file size. However, feel free to experiment with the best compression level "
-"for your specific need. Keep in mind that we use a higher compression level "
-"than the WordPress default value to compensate for the sharpening of the "
-"image."
+"for your specific need."
 msgstr ""
-"Vi har finjusterat plugin för att ge dig den bästa balansen mellan kvalitet "
-"och filstorlek. Men experimentera gärna med den bästa komprimeringsnivån för "
-"ditt specifika behov. Tänk på att vi använder en högre komprimeringsnivå än "
-"WordPress standardvärde för att kompensera för skärpning av bilden."
+"Vi har finjusterat pluginet för att ge dig den bästa balansen mellan "
+"kvalitet och filstorlek. Men experimentera gärna med den bästa "
+"komprimeringsnivån för ditt specifika behov."
 
-#: better-images.php:244
+#: better-images.php:247
 msgid "Recommended value: "
 msgstr "Rekommenderat värde: "
 
-#: better-images.php:245
+#: better-images.php:248
 msgid "WordPress default value: "
 msgstr "Standardvärde för WordPress: "
 
-#: better-images.php:249
+#: better-images.php:252
 msgid "Sharpen the image"
-msgstr "Göra bilden skarpare"
+msgstr "Gör bilden skarpare"
 
-#: better-images.php:257
+#: better-images.php:260
 msgid ""
 "Sharpens the original image and all other size variants to make your image "
-"pop and look better. This will increase the file size by around 20%. To "
-"compensate for this we raise the compression level from 82% to 62%."
+"pop and look better."
 msgstr ""
 "Gör den originalbilden och alla andra storleksvarianter skarpare för att få "
-"bilden att poppa och se bättre ut. Detta ökar filstorleken med cirka 20%. "
-"För att kompensera för detta höjer vi kompressionsnivån från 82% till 62%."
+"bilden att poppa och se bättre ut."
 
-#: better-images.php:261
+#: better-images.php:264
 msgid "Remove EXIF data from image but keep color space profile"
 msgstr "Ta bort EXIF-data från bilden men behåll färgrymdsprofilen"
 
-#: better-images.php:269
+#: better-images.php:272
 msgid ""
 "EXIF data is information about the image embedded in the image file. This "
 "data is in most cases not used. Removing this data can shave off up to 30 kb "
@@ -164,11 +159,11 @@ msgstr ""
 "till 30 kb per storleksvariant. Färgrymdsprofilen behålls så att den "
 "uppladdade bilden ser likadan ut som på datorn."
 
-#: better-images.php:273
+#: better-images.php:276
 msgid "Convert PNG image to JPEG"
 msgstr "Konvertera PNG-bild till JPEG"
 
-#: better-images.php:281
+#: better-images.php:284
 msgid ""
 "A PNG image can be up to 20 times larger than the equivalent image in JPEG. "
 "Converting PNG to JPEG will not only save you a lot of disk space, but also "
@@ -178,11 +173,11 @@ msgstr ""
 "Att konvertera PNG till JPEG kommer inte bara att spara mycket diskutrymme, "
 "men också göra att din webbplats laddas mycket snabbare."
 
-#: better-images.php:285
+#: better-images.php:288
 msgid "Convert image with CMYK color mode to RGB"
 msgstr "Konvertera bild med CMYK-färgläge till RGB"
 
-#: better-images.php:293
+#: better-images.php:296
 msgid ""
 "CMYK color mode is used on images meant to be used in print. WordPress will "
 "not be able to compress the image so you will end upp with multiple variants "
@@ -197,28 +192,28 @@ msgstr ""
 "att konvertera bilden till RGB-läge innan någon storleksändring eller "
 "komprimering sker."
 
-#: better-images.php:297
+#: better-images.php:300
 msgid "More things that Better Images does"
 msgstr "Fler saker som Better Images gör"
 
-#: better-images.php:302
+#: better-images.php:305
 msgid "Checks if the image already exist to avoid duplicates."
 msgstr "Kontrollerar om bilden redan finns för att undvika dubbletter."
 
-#: better-images.php:303
+#: better-images.php:306
 msgid "Replaces special characters and non english letters in the filename."
 msgstr "Ersätter specialtecken och icke engelska bokstäver i filnamnet."
 
-#: better-images.php:304
+#: better-images.php:307
 msgid "Adds a max height of 768 pixels to medium_large size variant."
 msgstr ""
 "Lägger till en maxhöjd på 768 pixlar till storleksvarianten medium_large."
 
-#: better-images.php:312
+#: better-images.php:315
 msgid "Save Changes"
 msgstr "Spara ändringar"
 
-#: better-images.php:317
+#: better-images.php:320
 msgid ""
 "If you like this plugin please consider writing a review and giving us 5 "
 "stars."
@@ -226,14 +221,14 @@ msgstr ""
 "Om du gillar det här pluginet så överväga att skriva en recension och ge oss "
 "5 stjärnor."
 
-#: better-images.php:320
+#: better-images.php:323
 msgid "Write a review"
 msgstr "Skriv en recension"
 
-#: better-images.php:357
+#: better-images.php:360
 msgid "The file you are trying to upload already exists."
 msgstr "Filen som du försöker ladda upp finns redan."
 
-#: better-images.php:515 better-images.php:583
+#: better-images.php:522 better-images.php:590
 msgid "Could not read image size."
 msgstr "Det gick inte att läsa bildstorleken."

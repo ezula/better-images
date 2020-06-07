@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Better Images plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Better Images 0.8.0\n"
+"Project-Id-Version: Better Images 1.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/better-images\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-05-23T19:38:21+00:00\n"
+"POT-Creation-Date: 2020-06-06T21:21:56+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: better-images\n"
@@ -30,127 +30,127 @@ msgstr ""
 msgid "https://webbson.se"
 msgstr ""
 
-#: better-images.php:72
+#: better-images.php:75
 msgid "Better Images could not be enabled. The required PHP module ImageMagick could not be found. To enable Better Images please contact your web host and ask them to install ImageMagick."
 msgstr ""
 
-#: better-images.php:210
+#: better-images.php:213
 msgid "Tired of resizing, compressing, converting, optimizing and exporting images over and over again? Better Images is a plugin that automagically does this hard work for you. Just upload your original image into the media library and the plugin will produce an image that is both better looking and smaller in size. And it will also resize the original full resolution image to save space."
 msgstr ""
 
-#: better-images.php:216
+#: better-images.php:219
 msgid "Settings"
 msgstr ""
 
-#: better-images.php:218
+#: better-images.php:221
 msgid "Here's everything the plugin will do for you every time you upload an image."
 msgstr ""
 
-#: better-images.php:222
+#: better-images.php:225
 msgid "Resize and compress the original full resolution image"
 msgstr ""
 
-#: better-images.php:225
-#: better-images.php:252
-#: better-images.php:264
-#: better-images.php:276
-#: better-images.php:288
+#: better-images.php:228
+#: better-images.php:255
+#: better-images.php:267
+#: better-images.php:279
+#: better-images.php:291
 msgid "Yes"
 msgstr ""
 
-#: better-images.php:226
-#: better-images.php:253
-#: better-images.php:265
-#: better-images.php:277
-#: better-images.php:289
+#: better-images.php:229
+#: better-images.php:256
+#: better-images.php:268
+#: better-images.php:280
+#: better-images.php:292
 msgid "No"
 msgstr ""
 
-#: better-images.php:230
+#: better-images.php:233
 msgid "Resizes and compresses the uploaded image to the maximum size of 2560 pixels. If the uploaded image is smaller than 2560 pixels it will be compressed but retain it's original size. This is the core feature of the plugin and can not be disabled."
 msgstr ""
 
-#: better-images.php:234
+#: better-images.php:237
 msgid "JPEG quality"
 msgstr ""
 
-#: better-images.php:243
-msgid "We have tweaked the plugin to give you the best balance between quality and file size. However, feel free to experiment with the best compression level for your specific need. Keep in mind that we use a higher compression level than the WordPress default value to compensate for the sharpening of the image."
+#: better-images.php:246
+msgid "We have tweaked the plugin to give you the best balance between quality and file size. However, feel free to experiment with the best compression level for your specific need."
 msgstr ""
 
-#: better-images.php:244
+#: better-images.php:247
 msgid "Recommended value: "
 msgstr ""
 
-#: better-images.php:245
+#: better-images.php:248
 msgid "WordPress default value: "
 msgstr ""
 
-#: better-images.php:249
+#: better-images.php:252
 msgid "Sharpen the image"
 msgstr ""
 
-#: better-images.php:257
-msgid "Sharpens the original image and all other size variants to make your image pop and look better. This will increase the file size by around 20%. To compensate for this we raise the compression level from 82% to 62%."
+#: better-images.php:260
+msgid "Sharpens the original image and all other size variants to make your image pop and look better."
 msgstr ""
 
-#: better-images.php:261
+#: better-images.php:264
 msgid "Remove EXIF data from image but keep color space profile"
 msgstr ""
 
-#: better-images.php:269
+#: better-images.php:272
 msgid "EXIF data is information about the image embedded in the image file. This data is in most cases not used. Removing this data can shave off up to 30 kb per size variant. The color space profile will be retained so the upload image will look the same as on you computer."
 msgstr ""
 
-#: better-images.php:273
+#: better-images.php:276
 msgid "Convert PNG image to JPEG"
 msgstr ""
 
-#: better-images.php:281
+#: better-images.php:284
 msgid "A PNG image can be up to 20 times larger than the equivalent image in JPEG. Converting PNG to JPEG will not only save you a lot of disk space, but also make your website load much faster."
 msgstr ""
 
-#: better-images.php:285
+#: better-images.php:288
 msgid "Convert image with CMYK color mode to RGB"
 msgstr ""
 
-#: better-images.php:293
+#: better-images.php:296
 msgid "CMYK color mode is used on images meant to be used in print. WordPress will not be able to compress the image so you will end upp with multiple variants of the image in different sizes, each of them weighing in at the same size in mega byte as the original full size image. Enable this feature to convert the image to RGB mode before any resizing or compression occurs."
 msgstr ""
 
-#: better-images.php:297
+#: better-images.php:300
 msgid "More things that Better Images does"
 msgstr ""
 
-#: better-images.php:302
+#: better-images.php:305
 msgid "Checks if the image already exist to avoid duplicates."
 msgstr ""
 
-#: better-images.php:303
+#: better-images.php:306
 msgid "Replaces special characters and non english letters in the filename."
 msgstr ""
 
-#: better-images.php:304
+#: better-images.php:307
 msgid "Adds a max height of 768 pixels to medium_large size variant."
 msgstr ""
 
-#: better-images.php:312
+#: better-images.php:315
 msgid "Save Changes"
 msgstr ""
 
-#: better-images.php:317
+#: better-images.php:320
 msgid "If you like this plugin please consider writing a review and giving us 5 stars."
 msgstr ""
 
-#: better-images.php:320
+#: better-images.php:323
 msgid "Write a review"
 msgstr ""
 
-#: better-images.php:357
+#: better-images.php:360
 msgid "The file you are trying to upload already exists."
 msgstr ""
 
-#: better-images.php:515
-#: better-images.php:583
+#: better-images.php:522
+#: better-images.php:590
 msgid "Could not read image size."
 msgstr ""

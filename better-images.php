@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Better Images
  * Description: Just upload your images and this plugin will resize, sharpen, compress, convert and optimize them to produce images that are both better looking and smaller in size. And it will also resize the original full resolution image to save space.
- * Version: 1.0.1
+ * Version: 1.1.0
  * Text Domain: better-images
  * Domain Path: /languages
  * Author: Webbson AB
@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || die( 'No script kiddies please!' );
 require 'imagick-helper.php';
 
 $wnbi_debug_logger   = false;
-$wnbi_plugin_version = '1.0.1';
+$wnbi_plugin_version = '1.1.0';
 
 // Default plugin values.
 if ( is_admin() && ( get_option( 'wnbi_better_images_version' ) !== $wnbi_plugin_version ) ) {
@@ -243,7 +243,7 @@ function wnbi_better_images_options() {
 						</select>
 					</td>
 					<td>
-						<p class="description"><?php esc_html_e( 'We have tweaked the plugin to give you the best balance between quality and file size. However, feel free to experiment with the best compression level for your specific need. Keep in mind that we use a higher compression level than the WordPress default value to compensate for the sharpening of the image.', 'better-images' ); ?></p>
+						<p class="description"><?php esc_html_e( 'We have tweaked the plugin to give you the best balance between quality and file size. However, feel free to experiment with the best compression level for your specific need.', 'better-images' ); ?></p>
 						<p class="description"><?php esc_html_e( 'Recommended value: ', 'better-images' ); ?><code>62</code>
 						<br><?php esc_html_e( 'WordPress default value: ', 'better-images' ); ?><code>82</code></p>
 					</td>
@@ -257,7 +257,7 @@ function wnbi_better_images_options() {
 						</select>
 					</td>
 					<td>
-						<p class="description"><?php esc_html_e( 'Sharpens the original image and all other size variants to make your image pop and look better. This will increase the file size by around 20%. To compensate for this we raise the compression level from 82% to 62%.', 'better-images' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Sharpens the original image and all other size variants to make your image pop and look better.', 'better-images' ); ?></p>
 					</td>
 				</tr>
 				<tr>
