@@ -56,8 +56,8 @@ function wnbi_imagick_strip_exif( $image ) {
 	} else {
 		wnbi_debug_log( 'Warning: No color profile found on image.' );
 		// We may want to add a color profile in the upcoming releases.
-        // $icc_rgb = file_get_contents( plugin_dir_path( __FILE__ ) . 'sRGB-IEC61966-2.1.icc' );
-        // $image->profileImage( 'icc', $icc_rgb );
+		// $icc_rgb = file_get_contents( plugin_dir_path( __FILE__ ) . 'sRGB-IEC61966-2.1.icc' );
+		// $image->profileImage( 'icc', $icc_rgb );
 	}
 
 	wnbi_debug_log( 'Image has been stripped of exif information.' );
@@ -91,7 +91,7 @@ function wnbi_imagick_transform_cmyk_to_rgb( $image ) {
 
 	if ( false === $has_icc_profile ) {
 		$icc_cmyk = file_get_contents( plugin_dir_path( __FILE__ ) . 'USWebUncoated.icc' );
-        $image->profileImage( 'icc', $icc_cmyk );
+		$image->profileImage( 'icc', $icc_cmyk );
 		unset( $icc_cmyk );
 	}
 
