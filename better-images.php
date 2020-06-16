@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Better Images
  * Description: Just upload your images and this plugin will resize, sharpen, compress, convert and optimize them to produce images that are both better looking and smaller in size. And it will also resize the original full resolution image to save space.
- * Version: 1.2.0
+ * Version: 1.2.1
  * Text Domain: better-images
  * Domain Path: /languages
  * Author: Webbson AB
@@ -18,7 +18,7 @@ require 'imagick-helper.php';
 require 'gd-helper.php';
 
 $wnbi_debug_logger      = false;
-$wnbi_plugin_version    = '1.2.0';
+$wnbi_plugin_version    = '1.2.1';
 $wnbi_imagick_installed = extension_loaded( 'imagick' );
 
 // Default plugin values.
@@ -324,12 +324,12 @@ function wnbi_better_images_options() {
 						<th class="title-column" scope="row"><?php esc_html_e( 'Convert image with CMYK color mode to RGB', 'better-images' ); ?></th>
 						<td class="select-column" valign="top">
 							<select name="convert_cmyk_yesno" id="convert_cmyk_yesno" disabled >
-								<option value="yes"><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
-								<option value="no" selected="selected"><?php esc_html_e( 'No', 'better-images' ); ?></option>
+								<option value="yes" selected="selected"><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
+								<option value="no"><?php esc_html_e( 'No', 'better-images' ); ?></option>
 							</select>
 						</td>
 						<td>
-							<p class="description"><?php esc_html_e( 'This feature is not supported in GD and is therefore turned off by default.', 'better-images' ); ?></p>
+							<p class="description"><?php esc_html_e( 'GD can not handle CMYK color space so all CMYK images are converted to RGB by default.', 'better-images' ); ?></p>
 							<a href="https://wordpress.org/plugins/better-images/#faq" target="_blank" title="Read more about GD in our FAQ section" class="description"><?php esc_html_e( 'Read more about GD in our FAQ section', 'better-images' ); ?></a>
 						</td>
 
@@ -398,11 +398,6 @@ function wnbi_wp_handle_upload_prefilter( $file ) {
 	if ( wnbi_file_is_png( $filename ) && $convert_png_enabled ) {
 		wnbi_debug_log( 'Filetype is PNG. Image will be converted to JPG. Checkif if file with JPG extension exists.' );
 		$filename = wnbi_replace_extension( $filename, 'jpg', false );
-	}
-
-	if ( $is_cmyk && ! $wnbi_imagick_installed ) {
-		wnbi_debug_log( 'File is a CMYK file and Imagick is not installed. Cannot convert.' );
-		$file['error'] = __( 'The file you are trying to upload is a CMYK file.', 'better-images' );
 	}
 
 	if ( wnbi_does_file_exists( $filename ) ) {

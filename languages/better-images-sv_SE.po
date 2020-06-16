@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Better Images\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/better-images\n"
-"POT-Creation-Date: 2020-06-15T14:51:01+00:00\n"
-"PO-Revision-Date: 2020-06-15 16:51+0200\n"
+"POT-Creation-Date: 2020-06-16T19:33:00+00:00\n"
+"PO-Revision-Date: 2020-06-16 21:34+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: sv_SE\n"
@@ -210,8 +210,11 @@ msgstr ""
 
 #: better-images.php:332
 msgid ""
-"This feature is not supported in GD and is therefore turned off by default."
-msgstr "Denna funktion stöds inte i GD och är därför avstängd som standard."
+"GD can not handle CMYK color space so all CMYK images are converted to RGB "
+"by default."
+msgstr ""
+"GD kan inte hantera CMYK-färger så alla CMYK-bilder konverteras till RGB som "
+"standard."
 
 #: better-images.php:339
 msgid "More things that Better Images does"
@@ -246,17 +249,21 @@ msgstr ""
 msgid "Write a review"
 msgstr "Skriv en recension"
 
-#: better-images.php:405
-msgid "The file you are trying to upload is a CMYK file."
-msgstr "Filen som du försöker ladda upp är en CMYK fil."
-
-#: better-images.php:409
+#: better-images.php:404
 msgid "The file you are trying to upload already exists."
 msgstr "Filen som du försöker ladda upp finns redan."
 
-#: better-images.php:590 better-images.php:666
+#: better-images.php:585 better-images.php:661
 msgid "Could not read image size."
 msgstr "Det gick inte att läsa bildstorleken."
+
+#~ msgid ""
+#~ "This feature is not supported in GD and is therefore turned off by "
+#~ "default."
+#~ msgstr "Denna funktion stöds inte i GD och är därför avstängd som standard."
+
+#~ msgid "The file you are trying to upload is a CMYK file."
+#~ msgstr "Filen som du försöker ladda upp är en CMYK fil."
 
 #~ msgid "Saved."
 #~ msgstr "Sparad."

@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Better Images plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Better Images 1.2.0\n"
+"Project-Id-Version: Better Images 1.2.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/better-images\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-06-15T14:51:01+00:00\n"
+"POT-Creation-Date: 2020-06-16T19:33:00+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: better-images\n"
@@ -137,7 +137,7 @@ msgid "CMYK color mode is used on images meant to be used in print. WordPress wi
 msgstr ""
 
 #: better-images.php:332
-msgid "This feature is not supported in GD and is therefore turned off by default."
+msgid "GD can not handle CMYK color space so all CMYK images are converted to RGB by default."
 msgstr ""
 
 #: better-images.php:339
@@ -168,15 +168,11 @@ msgstr ""
 msgid "Write a review"
 msgstr ""
 
-#: better-images.php:405
-msgid "The file you are trying to upload is a CMYK file."
-msgstr ""
-
-#: better-images.php:409
+#: better-images.php:404
 msgid "The file you are trying to upload already exists."
 msgstr ""
 
-#: better-images.php:590
-#: better-images.php:666
+#: better-images.php:585
+#: better-images.php:661
 msgid "Could not read image size."
 msgstr ""

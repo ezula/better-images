@@ -3,7 +3,7 @@ Contributors: hemenderki, svunz, charliederki
 Tags: images, image, sharpen, sharpening, compress, compression, optimize, optimization, resize, resizing, original image, full image
 Requires at least: 5.3
 Tested up to: 5.4.1
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 Requires PHP: 5.6
 License: GPLv2
 
@@ -115,7 +115,7 @@ ImageMagick and GD are two different suits of tools for image manipulation that 
 
 GD lacks some of the features that ImageMagick have which is why WordPress defaults to ImageMagick if it's installed. Better Images works with booth suits but we have made some tweaks in the feature set to make the plugin work with GD. Here's what you need to know if you are on a server with only GD installed.
 
-1. GD does not support conversion from CMYK to RGB. Therefore this feature is turned off by default.
+1. GD can not handle CMYK color space so all CMYK images are converted to RGB by default.
 2. GD can't preserve EXIF data and color profiles which means that you can't turn off the removal of EXIF data in the settings panel.
 3. GD on the other hand has shown in our tests to produced smaller file sizes than ImageMagick at the same compression level.
 
@@ -156,28 +156,29 @@ Yes that is possible, but, Better Images is meant to make image editing a thing 
 
 == Changelog ==
 
-### 1.2.0
+### 1.2.1
 
-Added support for GD. Hurray! Now everyone can benefit from this plugin. Read more about this in the FAQ section.
-Tweaked the sharpening algorithm to avoid over sharpening.
-Tweaked the resizing and compression and managed to reduce the file size with about 9% on average without any quality loss.
+- Added support for GD. Hurray! Now everyone can benefit from this plugin. Read more about this in the FAQ section.
+- Tweaked the sharpening algorithm to avoid over sharpening.
+- Tweaked the resizing and compression and managed to reduce the file size with about 9% on average without any quality loss.
+- Small bugfix regarding uploading of CMYK images.
 
 ### 1.1.0
 
-Remove settings when uninstalled and language fixes.
+- Remove settings when uninstalled and language fixes.
 
 ### 1.0.1
 
-Update readme and some minor fixes.
+- Update readme and some minor fixes.
 
 ### 1.0.0
 
-First stable release! :)
+- First stable release! :)
 
 ### 0.8.3
 
-Minor tweaks and fixed a few typos.
+- Minor tweaks and fixed a few typos.
 
 ### 0.8.2
 
-Beta release.
+- Beta release.
