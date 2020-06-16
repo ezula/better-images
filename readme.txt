@@ -3,18 +3,16 @@ Contributors: hemenderki, svunz, charliederki
 Tags: images, image, sharpen, sharpening, compress, compression, optimize, optimization, resize, resizing, original image, full image
 Requires at least: 5.3
 Tested up to: 5.4.1
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 Requires PHP: 5.6
 License: GPLv2
 
 Tired of resizing, compressing, converting, optimizing and exporting images? This plugin will automagically do this hard work for you.
 
 == Description ==
-NOTE: Better Images only works with ImageMagick, not with GD. Install this plugin to check if you have ImageMagick installed. Read more in the FAQ section below.
-
 Tired of resizing, compressing, converting, optimizing and exporting images over and over again? Better Images is a plugin that automagically does this hard work for you. Just upload your image into the media library and the plugin will produce an image that is both better looking and smaller in size. And it will also resize the original full resolution image to save space.
 
-If you benefit from this plugin please consider [writing a review](https://wordpress.org/support/plugin/better-images/reviews/#new-post)! That would mean a lot for us.
+If you benefit from this plugin please consider [writing a review](https://wordpress.org/support/plugin/better-images/reviews/#new-post)! That would mean a lot to us.
 
 ## Here's everything that Better Images will do for you every time you upload an image:
 
@@ -113,19 +111,13 @@ No, Better Images will do that for you. In fact uploading a compressed and resiz
 
 = What is ImageMagick and GD? =
 
-ImageMagick (also called Imagick) and GD are two different suits of tools for image manipulation that don't have any graphical interface. Instead the different tools are utilized by code. Most web hosts have one of them and som let you choose. Test has shown that ImageMagick produce better results and has more features. 
+ImageMagick and GD are two different suits of tools for image manipulation that don't have any graphical interface. Instead the different tools are utilized by code. Most web hosts have at least one of them and some let you choose.
 
-= Does this plugin work with GD? =
+GD lacks some of the features that ImageMagick have which is why WordPress defaults to ImageMagick if it's installed. Better Images works with booth suits but we have made some tweaks in the feature set to make the plugin work with GD. Here's what you need to know if you are on a server with only GD installed.
 
-No, Better Images does not work with GD. For the plugin to work you will need ImageMagick installed on the server. 
-
-= How can I check if I have ImageMagick installed on my server? =
-
-You can find that out by installing this plugin and go to Settings > Better Images. If you see an error massage and no settings then you do not have ImageMagic.
-
-= What if I don't have GD on my server? =
-
-Then we would recommend contacting your hosting company and ask them if they can activate ImageMagick for you.
+1. GD does not support conversion from CMYK to RGB. Therefore this feature is turned off by default.
+2. GD can't preserve EXIF data and color profiles which means that you can't turn off the removal of EXIF data in the settings panel.
+3. GD on the other hand has shown in our tests to produced smaller file sizes than ImageMagick at the same compression level.
 
 = Does Better Images support responsive images =
 
@@ -154,7 +146,7 @@ The full size original image is resized  to a maximum of 2560 pixels. If the upl
 
 Yes, that is possible. However, the images will be regenerated from the compressed 2560 pixel image, not the original full size image since that images does not exist anymore.
 
-= Can I edit and resize the image if I use Better Images? =
+= Can I edit and resize the image in WordPress if I use Better Images? =
 
 Yes that is possible, but, Better Images is meant to make image editing a thing of the past. Since WordPress is using responsive image handling there are no reasons to manually resize images. Also keep in mind that the resizing will happen from an already compressed and resized image.
 
@@ -163,6 +155,12 @@ Yes that is possible, but, Better Images is meant to make image editing a thing 
 1. The settings panel
 
 == Changelog ==
+
+### 1.2.0
+
+Added support for GD. Hurray! Now everyone can benefit from this plugin. Read more about this in the FAQ section.
+Tweaked the sharpening algorithm to avoid over sharpening.
+Tweaked the resizing and compression and managed to reduce the file size with about 9% on average without any quality loss.
 
 ### 1.1.0
 

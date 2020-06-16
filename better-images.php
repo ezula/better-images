@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Better Images
  * Description: Just upload your images and this plugin will resize, sharpen, compress, convert and optimize them to produce images that are both better looking and smaller in size. And it will also resize the original full resolution image to save space.
- * Version: 1.1.0
+ * Version: 1.2.0
  * Text Domain: better-images
  * Domain Path: /languages
  * Author: Webbson AB
@@ -15,9 +15,11 @@
 defined( 'ABSPATH' ) || die( 'No script kiddies please!' );
 
 require 'imagick-helper.php';
+require 'gd-helper.php';
 
-$wnbi_debug_logger   = false;
-$wnbi_plugin_version = '1.1.0';
+$wnbi_debug_logger      = false;
+$wnbi_plugin_version    = '1.2.0';
+$wnbi_imagick_installed = extension_loaded( 'imagick' );
 
 // Default plugin values.
 if ( is_admin() && ( get_option( 'wnbi_better_images_version' ) !== $wnbi_plugin_version ) ) {
@@ -71,9 +73,7 @@ function wnbi_after_setup_theme() {
  * Load the plugin. Do check to see if imagick is installed.
  */
 function wnbi_better_images_activate() {
-	if ( ! extension_loaded( 'imagick' ) ) {
-		die( esc_html__( 'Better Images could not be enabled. The required PHP module ImageMagick could not be found. To enable Better Images please contact your web host and ask them to install ImageMagick.', 'better-images' ) );
-	}
+	// Not used right now.
 }
 
 /**
@@ -135,6 +135,8 @@ function wnbi_admin_menu() {
  * Define the options page for the plugin.
  */
 function wnbi_better_images_options() {
+	global $wnbi_imagick_installed;
+
 	if ( isset( $_POST['wnbi-options-update'] ) && isset( $_POST['_wpnonce'] ) ) {
 
 		$wpnonce = sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) );
@@ -145,11 +147,11 @@ function wnbi_better_images_options() {
 			wp_die( 'Not authorized' );
 		}
 
-		$resizing_enabled      = 'yes'; // ( 'yes' === $_POST['resize_yesno'] ? 'yes' : 'no' );
-		$sharpen_image_enabled = ( 'yes' === $_POST['sharpen_yesno'] ? 'yes' : 'no' );
-		$remove_exif_enabled   = ( 'yes' === $_POST['remove_exif_yesno'] ? 'yes' : 'no' );
-		$convert_png_enabled   = ( 'yes' === $_POST['convert_png_yesno'] ? 'yes' : 'no' );
-		$convert_cmyk_enabled  = ( 'yes' === $_POST['convert_cmyk_yesno'] ? 'yes' : 'no' );
+		$resizing_enabled      = 'yes'; // isset($_POST['resize_yesno']) && ( 'yes' === $_POST['resize_yesno'] ) ? 'yes' : 'no';
+		$sharpen_image_enabled = isset( $_POST['sharpen_yesno'] ) && ( 'yes' === $_POST['sharpen_yesno'] ) ? 'yes' : 'no';
+		$remove_exif_enabled   = isset( $_POST['remove_exif_yesno'] ) && ( 'yes' === $_POST['remove_exif_yesno'] ) ? 'yes' : 'no';
+		$convert_png_enabled   = isset( $_POST['convert_png_yesno'] ) && ( 'yes' === $_POST['convert_png_yesno'] ) ? 'yes' : 'no';
+		$convert_cmyk_enabled  = isset( $_POST['convert_cmyk_yesno'] ) && ( 'yes' === $_POST['convert_cmyk_yesno'] ) ? 'yes' : 'no';
 
 		$compression_level = intval( $_POST['quality'] );
 
@@ -193,7 +195,8 @@ function wnbi_better_images_options() {
 		}
 
 		update_option( 'wnbi_better_images_quality', $compression_level );
-		echo( '<div id="message" class="updated fade"><p><strong>Changes have been saved.</strong></p></div>' );
+
+		printf( '<div id="message" class="updated fade"><p><strong>' . __( 'Changes has been saved.', 'better-images' ) . '</strong></p></div>' );
 	}
 
 	$compression_level     = intval( get_option( 'wnbi_better_images_quality' ) );
@@ -261,16 +264,34 @@ function wnbi_better_images_options() {
 					</td>
 				</tr>
 				<tr>
-					<th class="title-column" scope="row"><?php esc_html_e( 'Remove EXIF data from image but keep color space profile', 'better-images' ); ?></th>
-					<td class="select-column" valign="top">
-						<select name="remove_exif_yesno" id="remove_exif_yesno">
-							<option value="yes" <?php echo ( 'yes' === $remove_exif_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
-							<option value="no" <?php echo ( 'no' === $remove_exif_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
-						</select>
-					</td>
-					<td>
-						<p class="description"><?php esc_html_e( 'EXIF data is information about the image embedded in the image file. This data is in most cases not used. Removing this data can shave off up to 30 kb per size variant. The color space profile will be retained so the upload image will look the same as on you computer.', 'better-images' ); ?></p>
-					</td>
+					<?php if ( $wnbi_imagick_installed ) { ?>
+
+						<th class="title-column" scope="row"><?php esc_html_e( 'Remove EXIF data from image but keep color space profile', 'better-images' ); ?></th>
+						<td class="select-column" valign="top">
+							<select name="remove_exif_yesno" id="remove_exif_yesno">
+								<option value="yes" <?php echo ( 'yes' === $remove_exif_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
+								<option value="no" <?php echo ( 'no' === $remove_exif_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
+							</select>
+						</td>
+						<td>
+							<p class="description"><?php esc_html_e( 'EXIF data is information about the image embedded in the image file. This data is in most cases not used. Removing this data can shave off up to 30 kb per size variant. The color space profile will be retained so the upload image will look the same as on you computer.', 'better-images' ); ?></p>
+						</td>
+
+					<?php } else { ?>
+
+						<th class="title-column" scope="row"><?php esc_html_e( 'Remove EXIF data from image', 'better-images' ); ?></th>
+						<td class="select-column" valign="top">
+							<select name="remove_exif_yesno" id="remove_exif_yesno" disabled >
+								<option value="yes" selected="selected"><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
+								<option value="no"><?php esc_html_e( 'No', 'better-images' ); ?></option>
+							</select>
+						</td>
+						<td>
+							<p class="description"><?php esc_html_e( 'EXIF data is information about the image embedded in the image file. This data is in most cases not used. Removing this data can shave off up to 30 kb per size variant. GD can not preserve EXIF so this feature is turned on by default.', 'better-images' ); ?></p>
+							<a href="https://wordpress.org/plugins/better-images/#faq" target="_blank" title="Read more about GD in our FAQ section" class="description"><?php esc_html_e( 'Read more about GD in our FAQ section', 'better-images' ); ?></a>
+						</td>
+
+					<?php } ?>
 				</tr>
 				<tr>
 					<th class="title-column" scope="row"><?php esc_html_e( 'Convert PNG image to JPEG', 'better-images' ); ?></th>
@@ -285,16 +306,34 @@ function wnbi_better_images_options() {
 					</td>
 				</tr>
 				<tr>
-					<th class="title-column" scope="row"><?php esc_html_e( 'Convert image with CMYK color mode to RGB', 'better-images' ); ?></th>
-					<td class="select-column" valign="top">
-						<select name="convert_cmyk_yesno" id="convert_cmyk_yesno">
-							<option value="yes" <?php echo ( 'yes' === $convert_cmyk_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
-							<option value="no" <?php echo ( 'no' === $convert_cmyk_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
-						</select>
-					</td>
-					<td>
-						<p class="description"><?php esc_html_e( 'CMYK color mode is used on images meant to be used in print. WordPress will not be able to compress the image so you will end upp with multiple variants of the image in different sizes, each of them weighing in at the same size in mega byte as the original full size image. Enable this feature to convert the image to RGB mode before any resizing or compression occurs.', 'better-images' ); ?></p>
-					</td>
+					<?php if ( $wnbi_imagick_installed ) { ?>
+
+						<th class="title-column" scope="row"><?php esc_html_e( 'Convert image with CMYK color mode to RGB', 'better-images' ); ?></th>
+						<td class="select-column" valign="top">
+							<select name="convert_cmyk_yesno" id="convert_cmyk_yesno">
+								<option value="yes" <?php echo ( 'yes' === $convert_cmyk_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
+								<option value="no" <?php echo ( 'no' === $convert_cmyk_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
+							</select>
+						</td>
+						<td>
+							<p class="description"><?php esc_html_e( 'CMYK color mode is used on images meant to be used in print. WordPress will not be able to compress the image so you will end upp with multiple variants of the image in different sizes, each of them weighing in at the same size in mega byte as the original full size image. Enable this feature to convert the image to RGB mode before any resizing or compression occurs.', 'better-images' ); ?></p>
+						</td>
+
+					<?php } else { ?>
+
+						<th class="title-column" scope="row"><?php esc_html_e( 'Convert image with CMYK color mode to RGB', 'better-images' ); ?></th>
+						<td class="select-column" valign="top">
+							<select name="convert_cmyk_yesno" id="convert_cmyk_yesno" disabled >
+								<option value="yes"><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
+								<option value="no" selected="selected"><?php esc_html_e( 'No', 'better-images' ); ?></option>
+							</select>
+						</td>
+						<td>
+							<p class="description"><?php esc_html_e( 'This feature is not supported in GD and is therefore turned off by default.', 'better-images' ); ?></p>
+							<a href="https://wordpress.org/plugins/better-images/#faq" target="_blank" title="Read more about GD in our FAQ section" class="description"><?php esc_html_e( 'Read more about GD in our FAQ section', 'better-images' ); ?></a>
+						</td>
+
+					<?php } ?>
 				</tr>
 				<tr>
 					<th class="title-column" scope="row"><?php esc_html_e( 'More things that Better Images does', 'better-images' ); ?></th>
@@ -344,16 +383,26 @@ function wnbi_better_images_options() {
  * @param String $file Filename.
  */
 function wnbi_wp_handle_upload_prefilter( $file ) {
+	global $wnbi_imagick_installed;
+
 	wnbi_debug_log( 'Step 1: Validating uploaded image.' );
 
 	$convert_png_enabled = ( get_option( 'wnbi_better_images_convert_png' ) === 'yes' ) ? true : false;
 
 	$filename = wnbi_sanitize_file_name( $file['name'] );
 
+	$image   = getimagesize( $file['tmp_name'] );
+	$is_cmyk = array_key_exists( 'channels', $image ) && 4 === $image['channels'];
+
 	// If user uploads a PNG and conversion to JPG is enabled, check for an existng file with JPG extension.
 	if ( wnbi_file_is_png( $filename ) && $convert_png_enabled ) {
 		wnbi_debug_log( 'Filetype is PNG. Image will be converted to JPG. Checkif if file with JPG extension exists.' );
 		$filename = wnbi_replace_extension( $filename, 'jpg', false );
+	}
+
+	if ( $is_cmyk && ! $wnbi_imagick_installed ) {
+		wnbi_debug_log( 'File is a CMYK file and Imagick is not installed. Cannot convert.' );
+		$file['error'] = __( 'The file you are trying to upload is a CMYK file.', 'better-images' );
 	}
 
 	if ( wnbi_does_file_exists( $filename ) ) {
@@ -403,8 +452,8 @@ function wnbi_does_file_exists( $filename ) {
 
 	return intval(
 		$wpdb->get_var(
-			$wpdb->prepare("
-				SELECT post_id
+			$wpdb->prepare(
+				"SELECT post_id
 				FROM {$wpdb->postmeta}
 				WHERE meta_key = '_wp_attached_file' AND meta_value LIKE %s",
 				"%{$filename}"
@@ -451,13 +500,16 @@ function wnbi_sanitize_file_name( $filename ) {
  * @param Object $image_data The image data.
  */
 function wnbi_wp_handle_upload( $image_data ) {
+	global $wnbi_imagick_installed;
+
 	wnbi_debug_log( 'Step 3: Check filetype of uploaded image.' );
 
 	$convert_cmyk_enabled = ( get_option( 'wnbi_better_images_convert_cmyk' ) === 'yes' ) ? true : false;
 	$convert_png_enabled  = ( get_option( 'wnbi_better_images_convert_png' ) === 'yes' ) ? true : false;
 
-	if ( array_key_exists( 'type', $image_data ) && ( 'image/jpeg' !== $image_data['type'] && ( 'image/png' !== $image_data['type'] ) )
-	) {
+	if ( array_key_exists( 'type', $image_data ) && ( 'image/jpeg' !== $image_data['type']
+		&& ( 'image/png' !== $image_data['type'] ) ) ) {
+
 		wnbi_debug_log( 'Not a supported image format or no image, skipping. Type: ' . $image_data['type'] );
 		return $image_data;
 	}
@@ -469,12 +521,16 @@ function wnbi_wp_handle_upload( $image_data ) {
 
 	// Check if image is CMYK or if we should convert a PNG to JPG.
 	if ( $is_cmyk || $convert_png ) {
-		$image        = new Imagick( $image_data['file'] );
+
+		if ( $wnbi_imagick_installed ) {
+			$image = new Imagick( $image_data['file'] );
+		}
+
 		$old_png_file = $image_data['file'];
 
 		if ( $is_cmyk ) {
 
-			if ( ! $convert_cmyk_enabled ) {
+			if ( ! $convert_cmyk_enabled || ! $wnbi_imagick_installed ) {
 				wnbi_debug_log( 'Conversion to CMYK disabled, will not check for CMYK colorspace on image, proceeding.' );
 				return $image_data;
 			}
@@ -485,18 +541,29 @@ function wnbi_wp_handle_upload( $image_data ) {
 
 		if ( $convert_png ) {
 			wnbi_debug_log( 'Image is PNG and conversion to JPG is enabled. Attempting to convert to JPG.' );
-			$image = wnbi_imagick_convert_png_to_jpg( $image );
+
+			if ( $wnbi_imagick_installed ) {
+				$image = wnbi_imagick_convert_png_to_jpg( $image );
+			} else {
+				$png_image = imagecreatefrompng( $image_data['file'] );
+				$image     = wnbi_gd_convert_png_to_jpg( $png_image );
+			}
 
 			$image_data['file'] = wnbi_replace_extension( $image_data['file'], 'jpg', true );
 			$image_data['url']  = wnbi_replace_extension( $image_data['url'], 'jpg', true );
 			$image_data['type'] = 'image/jpeg';
 		}
 
-		// Write the final image to disk.
-		$image->writeImage( $image_data['file'] );
+		if ( $wnbi_imagick_installed ) {
 
-		// Remove the JPG from memory.
-		$image->destroy();
+			$image->writeImage( $image_data['file'] );
+			$image->destroy();
+		} else {
+
+			$compression_level = get_option( 'wnbi_better_images_quality' );
+			imagejpeg( $image, $image_data['file'], $compression_level );
+			imagedestroy( $image );
+		}
 
 		if ( $convert_png ) {
 			wnbi_debug_log( 'Unlinking old PNG file: ' . $old_png_file );
@@ -513,10 +580,11 @@ function wnbi_wp_handle_upload( $image_data ) {
  * @param String $resized_file The filename of the resized file.
  */
 function wnbi_image_make_intermediate_size( $resized_file ) {
+	global $wnbi_imagick_installed;
+
 	wnbi_debug_log( 'Step 4: Sharpen image and remove exif and metadata on upload.' );
 
-	$image = new Imagick( $resized_file );
-	$size  = @getimagesize( $resized_file );
+	$size = @getimagesize( $resized_file );
 
 	if ( ! $size ) {
 		return new WP_Error( 'invalid_image', __( 'Could not read image size.', 'better-images' ), $resized_file );
@@ -528,30 +596,36 @@ function wnbi_image_make_intermediate_size( $resized_file ) {
 	$sharpen_image_enabled = ( get_option( 'wnbi_better_images_sharpen_image' ) === 'yes' ) ? true : false;
 	$compression_level     = get_option( 'wnbi_better_images_quality' );
 
+	$image = $wnbi_imagick_installed ? new Imagick( $resized_file ) : imagecreatefromjpeg( $resized_file );
+
 	if ( $sharpen_image_enabled ) {
 		// We only want to use our sharpening on JPG files.
 		switch ( $orig_type ) {
 			case IMAGETYPE_JPEG:
-				$image = wnbi_imagick_sharpen_image( $image );
+				if ( $wnbi_imagick_installed ) {
+					$image = wnbi_imagick_sharpen_image( $image );
+				} else {
+					$image = wnbi_gd_sharpen_image( $image );
+				}
 				break;
 			default:
 				break;
 		}
 	}
 
-	if ( $remove_exif_enabled ) {
-		// Strip the Exif data on the image (keep color profile).
+	if ( $remove_exif_enabled && $wnbi_imagick_installed ) {
+		// Strip the Exif data on the image but keep color profile.
 		$image = wnbi_imagick_strip_exif( $image );
 	}
 
-	// Compress the image.
-	$image = wnbi_imagick_compress_image( $image, $compression_level );
-
-	// Write the final image to disk.
-	$image->writeImage( $resized_file );
-
-	// Remove the JPG from memory.
-	$image->destroy();
+	if ( $wnbi_imagick_installed ) {
+		$image = wnbi_imagick_compress_image( $image, $compression_level );
+		$image->writeImage( $resized_file );
+		$image->destroy();
+	} else {
+		imagejpeg( $image, $resized_file, $compression_level );
+		imagedestroy( $image );
+	}
 
 	return $resized_file;
 }
@@ -565,6 +639,8 @@ function wnbi_image_make_intermediate_size( $resized_file ) {
  * @param Object $image_data The image data.
  */
 function wnbi_wp_generate_attachment_metadata( $image_data ) {
+	global $wnbi_imagick_installed;
+
 	wnbi_debug_log( 'Step 5: Post processing of the uploaded image.' );
 
 	if ( ! array_key_exists( 'file', $image_data ) ) {
@@ -583,7 +659,7 @@ function wnbi_wp_generate_attachment_metadata( $image_data ) {
 	$upload_dir              = wp_upload_dir();
 	$uploaded_image_location = $upload_dir['basedir'] . DIRECTORY_SEPARATOR . $image_data['file'];
 
-	$image = new Imagick( $uploaded_image_location );
+	$image = $wnbi_imagick_installed ? new Imagick( $uploaded_image_location ) : imagecreatefromjpeg( $uploaded_image_location );
 	$size  = @getimagesize( $uploaded_image_location );
 
 	if ( ! $size ) {
@@ -593,13 +669,18 @@ function wnbi_wp_generate_attachment_metadata( $image_data ) {
 	list($orig_w, $orig_h, $orig_type) = $size;
 
 	if ( ( $orig_w > $max_size || $orig_h > $max_size ) && $resizing_enabled ) {
-		$image->resizeImage( $max_size, $max_size, Imagick::FILTER_LANCZOS, 1, true );
 
-		// set new image dimensions to wp.
-		$image_data['width']  = $image->getImageWidth();
-		$image_data['height'] = $image->getImageHeight();
+		if ( $wnbi_imagick_installed ) {
+			$image->resizeImage( $max_size, $max_size, Imagick::FILTER_LANCZOS, 1, true );
+		} else {
+			$image = wnbi_gd_resize_image( $image, $uploaded_image_location, $max_size, $max_size );
+		}
 
-		wnbi_debug_log( 'Image downsized. New image width: ' . $image->getImageWidth() . '. New image height: ' . $image->getImageHeight() . '.' );
+		// Set new image dimensions to wp.
+		$image_data['width']  = $wnbi_imagick_installed ? $image->getImageWidth() : imagesx( $image );
+		$image_data['height'] = $wnbi_imagick_installed ? $image->getImageHeight() : imagesy( $image );
+
+		wnbi_debug_log( 'Image downsized. New image width: ' . $image_data['width'] . '. New image height: ' . $image_data['height'] . '.' );
 	} else {
 		wnbi_debug_log( 'No resizing of image was needed or re-sizing not enabled. Skipping.' );
 	}
@@ -608,26 +689,31 @@ function wnbi_wp_generate_attachment_metadata( $image_data ) {
 		// We only want to use our sharpening on JPG files.
 		switch ( $orig_type ) {
 			case IMAGETYPE_JPEG:
-				$image = wnbi_imagick_sharpen_image( $image );
+				if ( $wnbi_imagick_installed ) {
+					$image = wnbi_imagick_sharpen_image( $image );
+				} else {
+					$image = wnbi_gd_sharpen_image( $image );
+				}
 				break;
 			default:
 				break;
 		}
 	}
 
-	if ( $remove_exif_enabled ) {
+	if ( $remove_exif_enabled && $wnbi_imagick_installed ) {
 		// Strip the Exif data on the image (keep color profile).
 		$image = wnbi_imagick_strip_exif( $image );
 	}
 
-	// Compress the image.
-	$image = wnbi_imagick_compress_image( $image, $compression_level );
+	if ( $wnbi_imagick_installed ) {
 
-	// Write the final image to disk.
-	$image->writeImage( $uploaded_image_location );
-
-	// Remove the JPG from memory.
-	$image->destroy();
+		$image = wnbi_imagick_compress_image( $image, $compression_level );
+		$image->writeImage( $uploaded_image_location );
+		$image->destroy();
+	} else {
+		imagejpeg( $image, $uploaded_image_location, $compression_level );
+		imagedestroy( $image );
+	}
 
 	return $image_data;
 }

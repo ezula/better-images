@@ -14,7 +14,7 @@
 function wnbi_imagick_sharpen_image( $image ) {
 
 	// Sharpen the image (the default is via the Lanczos algorithm).
-	$image->unsharpMaskImage( 0, 0.6, 1.4, 0 );
+	$image->unsharpMaskImage( 0, 0.4, 1.2, 0.01 );
 
 	wnbi_debug_log( 'Image has been sharpened.' );
 	return $image;
