@@ -2,8 +2,8 @@
 Contributors: hemenderki, svunz, charliederki
 Tags: images, image, sharpen, sharpening, compress, compression, optimize, optimization, resize, resizing, original image, full image
 Requires at least: 5.3
-Tested up to: 5.4.1
-Stable tag: 1.2.1
+Tested up to: 5.6
+Stable tag: 1.2.2
 Requires PHP: 5.6
 License: GPLv2
 
@@ -13,6 +13,8 @@ Tired of resizing, compressing, converting, optimizing and exporting images? Thi
 Tired of resizing, compressing, converting, optimizing and exporting images over and over again? Better Images is a plugin that automagically does this hard work for you. Just upload your image into the media library and the plugin will produce an image that is both better looking and smaller in size. And it will also resize the original full resolution image to save space.
 
 If you benefit from this plugin please consider [writing a review](https://wordpress.org/support/plugin/better-images/reviews/#new-post)! That would mean a lot to us.
+
+**Disclaimer:** With this plugin activated you can't regenerate images via other plugins or WP-CLI. Regeneration will be available in a upcoming Pro-version.
 
 ## Here's everything that Better Images will do for you every time you upload an image:
 
@@ -155,6 +157,10 @@ Yes that is possible, but, Better Images is meant to make image editing a thing 
 1. The settings panel
 
 == Changelog ==
+
+### 1.2.2
+
+- Tested with Wordpress 5.6.
 
 ### 1.2.1
 
