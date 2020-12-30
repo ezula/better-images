@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Better Images
  * Description: Just upload your images and this plugin will resize, sharpen, compress, convert and optimize them to produce images that are both better looking and smaller in size. And it will also resize the original full resolution image to save space.
- * Version: 1.2.1
+ * Version: 1.2.2
  * Text Domain: better-images
  * Domain Path: /languages
  * Author: Webbson AB
