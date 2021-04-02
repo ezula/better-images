@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Better Images
  * Description: Just upload your images and this plugin will resize, sharpen, compress, convert and optimize them to produce images that are both better looking and smaller in size. And it will also resize the original full resolution image to save space.
- * Version: 1.2.2
+ * Version: 1.2.3
  * Text Domain: better-images
  * Domain Path: /languages
  * Author: Webbson AB
@@ -18,7 +18,7 @@ require 'imagick-helper.php';
 require 'gd-helper.php';
 
 $wnbi_debug_logger      = false;
-$wnbi_plugin_version    = '1.2.1';
+$wnbi_plugin_version    = '1.2.3';
 $wnbi_imagick_installed = extension_loaded( 'imagick' );
 
 // Default plugin values.
@@ -445,16 +445,28 @@ function wnbi_file_is_png( $filename ) {
 function wnbi_does_file_exists( $filename ) {
 	global $wpdb;
 
-	return intval(
-		$wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT post_id
-				FROM {$wpdb->postmeta}
-				WHERE meta_key = '_wp_attached_file' AND meta_value LIKE %s",
-				"%{$filename}"
+	try {
+		$wp_upload_subdir = substr( wp_upload_dir()['subdir'], 1 );
+
+		$search_filename = empty($wp_upload_subdir)
+			? $filename
+			: $wp_upload_subdir . DIRECTORY_SEPARATOR . $filename;
+	
+		return intval(
+			$wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT post_id
+					FROM {$wpdb->postmeta}
+					WHERE meta_key = '_wp_attached_file' AND meta_value = %s",
+					$search_filename
+				)
 			)
-		)
-	);
+		);
+	} catch (Exception $e) {
+		// If anything goes wrong, let the file pass.
+		wnbi_debug_log('Could not check for duplicate filename, skipping.');
+		return 0;
+	}
 }
 
 /**

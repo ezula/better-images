@@ -2,8 +2,8 @@
 Contributors: hemenderki, svunz, charliederki
 Tags: images, image, sharpen, sharpening, compress, compression, optimize, optimization, resize, resizing, original image, full image
 Requires at least: 5.3
-Tested up to: 5.6
-Stable tag: 1.2.2
+Tested up to: 5.7
+Stable tag: 1.2.3
 Requires PHP: 5.6
 License: GPLv2
 
@@ -157,6 +157,11 @@ Yes that is possible, but, Better Images is meant to make image editing a thing 
 1. The settings panel
 
 == Changelog ==
+
+### 1.2.3
+
+- Bugfix for duplicate filename check.
+- Tested with Wordpress 5.7.
 
 ### 1.2.2
 
