@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Better Images
  * Description: Just upload your images and this plugin will resize, sharpen, compress, convert and optimize them to produce images that are both better looking and smaller in size. And it will also resize the original full resolution image to save space.
- * Version: 1.2.3
+ * Version: 1.2.4
  * Text Domain: better-images
  * Domain Path: /languages
  * Author: Webbson AB
@@ -18,7 +18,7 @@ require 'imagick-helper.php';
 require 'gd-helper.php';
 
 $wnbi_debug_logger      = false;
-$wnbi_plugin_version    = '1.2.3';
+$wnbi_plugin_version    = '1.2.4';
 $wnbi_imagick_installed = extension_loaded( 'imagick' );
 
 // Default plugin values.
@@ -437,6 +437,17 @@ function wnbi_file_is_png( $filename ) {
 }
 
 /**
+ * Helper function to check if file is JPEG.
+ *
+ * @param String $filename Filename.
+ */
+function wnbi_file_is_jpeg( $filename ) {
+	$ext = pathinfo( $filename, PATHINFO_EXTENSION );
+	return ( gettype( $ext ) === 'string' ) && ( ( strtoupper( $ext ) === 'JPG' ) ||
+		( strtoupper( $ext ) === 'JPEG' ) );
+}
+
+/**
  * Check if a given file exists in the uploads folder or not.
  *
  * @param  String $filename The filename to check for.
@@ -652,7 +663,14 @@ function wnbi_wp_generate_attachment_metadata( $image_data ) {
 
 	if ( ! array_key_exists( 'file', $image_data ) ) {
 
+		wnbi_debug_log("Media type not supported, skipping post processing.");
 		// If the media type is not an image we don't do this step.
+		return $image_data;
+	}
+
+	if ( ! wnbi_file_is_jpeg( $image_data['file'] ) ) {
+
+		wnbi_debug_log("Image not supported (not JPEG), skipping post processing.");
 		return $image_data;
 	}
 
