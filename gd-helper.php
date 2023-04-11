@@ -8,8 +8,8 @@
 /**
  * Sharpen an image with GD.
  *
- * @param resource $image The GD image.
- * @return resource The sharpened image.
+ * @param GdImage $image The GD image.
+ * @return GdImage The sharpened image.
  */
 function wnbi_gd_sharpen_image( $image ) {
 	$matrix = array(
@@ -28,7 +28,7 @@ function wnbi_gd_sharpen_image( $image ) {
 /**
  * Resize a GD image and keep aspect ratio.
  *
- * @param resource $image    The GD image.
+ * @param GdImage $image    The GD image.
  * @param String   $filename The path to the image file.
  * @param Number   $max_w    Max width of image.
  * @param Number   $max_h    Mac height of the image.
@@ -56,8 +56,8 @@ function wnbi_gd_resize_image( $image, $filename, $max_w, $max_h ) {
 /**
  * Convert a PNG image to JPG with GD.
  *
- * @param resource $png_image The GD image.
- * @return resource The JPG image.
+ * @param GdImage $png_image The GD image.
+ * @return GdImage The JPG image.
  */
 function wnbi_gd_convert_png_to_jpg( $png_image ) {
 	$bg = imagecreatetruecolor( imagesx( $png_image ), imagesy( $png_image ) );

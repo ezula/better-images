@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Better Images
  * Description: Just upload your images and this plugin will resize, sharpen, compress, convert and optimize them to produce images that are both better looking and smaller in size. And it will also resize the original full resolution image to save space.
- * Version: 1.2.5
+ * Version: 1.2.6
  * Text Domain: better-images
  * Domain Path: /languages
  * Author: Webbson AB
@@ -18,7 +18,7 @@ require 'imagick-helper.php';
 require 'gd-helper.php';
 
 $wnbi_debug_logger      = false;
-$wnbi_plugin_version    = '1.2.5';
+$wnbi_plugin_version    = '1.2.6';
 $wnbi_imagick_installed = extension_loaded( 'imagick' );
 
 // Default plugin values.
@@ -104,7 +104,7 @@ function wnbi_better_images_admin_styles() {
  * @param int $threshold Current threshold.
  */
 function wnbi_big_image_size_threshold( $threshold ) {
-	$resizing_enabled = ( get_option( 'wnbi_better_images_resize_image' ) === 'yes' ) ? true : false;
+	$resizing_enabled = get_option( 'wnbi_better_images_resize_image' ) === 'yes';
 
 	if ( $resizing_enabled ) {
 		return false;
@@ -155,7 +155,7 @@ function wnbi_better_images_options() {
 
 		$compression_level = intval( $_POST['quality'] );
 
-		$compression_level = ( '' === $compression_level ) ? 1 : $compression_level;
+		$compression_level = 0 === $compression_level ? 1 : $compression_level;
 		$compression_level = ( ctype_digit( strval( $compression_level ) ) === false ) ? get_option( 'wnbi_better_images_quality' ) : $compression_level;
 
 		if ( $compression_level < 1 ) {
@@ -387,7 +387,7 @@ function wnbi_wp_handle_upload_prefilter( $file ) {
 
 	wnbi_debug_log( 'Step 1: Validating uploaded image.' );
 
-	$convert_png_enabled = ( get_option( 'wnbi_better_images_convert_png' ) === 'yes' ) ? true : false;
+	$convert_png_enabled = get_option( 'wnbi_better_images_convert_png' ) === 'yes';
 
 	$filename = wnbi_sanitize_file_name( $file['name'] );
 
@@ -512,15 +512,15 @@ function wnbi_sanitize_file_name( $filename ) {
  * - convert from CMYK to RGB (if enabled).
  * - convert from PNG to JPG (if enabled).
  *
- * @param Object $image_data The image data.
+ * @param Array $image_data The image data.
  */
 function wnbi_wp_handle_upload( $image_data ) {
 	global $wnbi_imagick_installed;
 
 	wnbi_debug_log( 'Step 3: Check filetype of uploaded image.' );
 
-	$convert_cmyk_enabled = ( get_option( 'wnbi_better_images_convert_cmyk' ) === 'yes' ) ? true : false;
-	$convert_png_enabled  = ( get_option( 'wnbi_better_images_convert_png' ) === 'yes' ) ? true : false;
+	$convert_cmyk_enabled = get_option( 'wnbi_better_images_convert_cmyk' ) === 'yes';
+	$convert_png_enabled  = get_option( 'wnbi_better_images_convert_png' ) === 'yes';
 
 	if ( array_key_exists( 'type', $image_data ) && ( 'image/jpeg' !== $image_data['type']
 		&& ( 'image/png' !== $image_data['type'] ) ) ) {
@@ -607,8 +607,8 @@ function wnbi_image_make_intermediate_size( $resized_file ) {
 
 	list($orig_w, $orig_h, $orig_type) = $size;
 
-	$remove_exif_enabled   = ( get_option( 'wnbi_better_images_remove_exif' ) === 'yes' ) ? true : false;
-	$sharpen_image_enabled = ( get_option( 'wnbi_better_images_sharpen_image' ) === 'yes' ) ? true : false;
+	$remove_exif_enabled   = get_option( 'wnbi_better_images_remove_exif' ) === 'yes';
+	$sharpen_image_enabled = get_option( 'wnbi_better_images_sharpen_image' ) === 'yes';
 	$compression_level     = get_option( 'wnbi_better_images_quality' );
 
 	$image = $wnbi_imagick_installed ? new Imagick( $resized_file ) : imagecreatefromjpeg( $resized_file );
@@ -646,12 +646,12 @@ function wnbi_image_make_intermediate_size( $resized_file ) {
 }
 
 /**
- * Post processing of the uploaded image.
+ * Post-processing of the uploaded image.
  *
- * - if neccessary, downsize the original image
+ * - if necessary, downsize the original image
  * - compress the uploaded image
  *
- * @param Object $image_data The image data.
+ * @param Array $image_data The image data.
  */
 function wnbi_wp_generate_attachment_metadata( $image_data ) {
 	global $wnbi_imagick_installed;
@@ -672,9 +672,9 @@ function wnbi_wp_generate_attachment_metadata( $image_data ) {
 	}
 
 	$max_size              = get_option( 'wnbi_better_images_resize_threshold' ) === 0 ? 0 : get_option( 'wnbi_better_images_resize_threshold' );
-	$resizing_enabled      = ( get_option( 'wnbi_better_images_resize_image' ) === 'yes' ) ? true : false;
-	$remove_exif_enabled   = ( get_option( 'wnbi_better_images_remove_exif' ) === 'yes' ) ? true : false;
-	$sharpen_image_enabled = ( get_option( 'wnbi_better_images_sharpen_image' ) === 'yes' ) ? true : false;
+	$resizing_enabled      = get_option( 'wnbi_better_images_resize_image' ) === 'yes';
+	$remove_exif_enabled   = get_option( 'wnbi_better_images_remove_exif' ) === 'yes';
+	$sharpen_image_enabled = get_option( 'wnbi_better_images_sharpen_image' ) === 'yes';
 	$compression_level     = get_option( 'wnbi_better_images_quality' );
 
 	// Find the path to the uploaded image.
