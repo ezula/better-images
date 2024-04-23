@@ -1,6 +1,8 @@
 # better-images
 
-A WordPress plugin for Better Images.
+![WordPress Plugin: Tested WP Version](https://img.shields.io/wordpress/plugin/tested/better-images)
+
+A WordPress plugin for [Better Images](https://wordpress.org/plugins/better-images/).
 
 Tired of resizing, compressing, converting, optimizing and exporting images? This plugin will automagically do this hard work for you.
 
