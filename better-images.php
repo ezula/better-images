@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Better Images
  * Description: Just upload your images and this plugin will resize, sharpen, compress, convert and optimize them to produce images that are both better looking and smaller in size. And it will also resize the original full resolution image to save space.
- * Version: 1.2.6
+ * Version: 1.2.7
  * Text Domain: better-images
  * Domain Path: /languages
  * Author: Webbson AB
@@ -18,7 +18,7 @@ require 'imagick-helper.php';
 require 'gd-helper.php';
 
 $wnbi_debug_logger      = false;
-$wnbi_plugin_version    = '1.2.6';
+$wnbi_plugin_version    = '1.2.7';
 $wnbi_imagick_installed = extension_loaded( 'imagick' );
 
 // Default plugin values.
@@ -142,7 +142,7 @@ function wnbi_better_images_options() {
 		$wpnonce = sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) );
 
 		if ( ! ( current_user_can( 'manage_options' )
-			&& wp_verify_nonce( $wpnonce, 'wnbi-options-update' ) )
+		         && wp_verify_nonce( $wpnonce, 'wnbi-options-update' ) )
 		) {
 			wp_die( 'Not authorized' );
 		}
@@ -207,170 +207,188 @@ function wnbi_better_images_options() {
 	$convert_cmyk_enabled  = get_option( 'wnbi_better_images_convert_cmyk' ); ?>
 
 
-	<div class="wrap">
-		<form method="post" accept-charset="utf-8">
+    <div class="wrap">
+        <form method="post" accept-charset="utf-8">
 
-			<div style="max-width: 620px;">
-				<h1>Better Images</h1>
+            <div style="max-width: 620px;">
+                <h1>Better Images</h1>
 
-				<p><?php esc_html_e( 'Tired of resizing, compressing, converting, optimizing and exporting images over and over again? Better Images is a plugin that automagically does this hard work for you. Just upload your original image into the media library and the plugin will produce an image that is both better looking and smaller in size. And it will also resize the original full resolution image to save space.', 'better-images' ); ?></p>
+                <p><?php esc_html_e( 'Tired of resizing, compressing, converting, optimizing and exporting images over and over again? Better Images is a plugin that automagically does this hard work for you. Just upload your original image into the media library and the plugin will produce an image that is both better looking and smaller in size. And it will also resize the original full resolution image to save space.', 'better-images' ); ?></p>
 
-			</div>
+            </div>
 
-			<hr style="margin-top:1rem; margin-bottom:2rem;">
+            <hr style="margin-top:1rem; margin-bottom:2rem;">
 
-			<h2><?php esc_html_e( 'Settings', 'better-images' ); ?></h2>
+            <h2><?php esc_html_e( 'Settings', 'better-images' ); ?></h2>
 
-			<p><?php esc_html_e( "Here's everything the plugin will do for you every time you upload an image.", 'better-images' ); ?></p>
+            <p><?php esc_html_e( "Here's everything the plugin will do for you every time you upload an image.", 'better-images' ); ?></p>
 
-			<table class="form-table" style="max-width: 1024px;">
-				<tr>
-					<th class="title-column" scope="row"><?php esc_html_e( 'Resize and compress the original full resolution image', 'better-images' ); ?></th>
-					<td class="select-column" valign="top">
-						<select name="resize_yesno" id="resize_yesno" disabled>
-							<option value="yes" <?php echo ( 'yes' === $resizing_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
-							<option value="no" <?php echo ( 'no' === $resizing_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
-						</select>
-					</td>
-					<td>
-						<p class="description"><?php esc_html_e( "Resizes and compresses the uploaded image to the maximum size of 2560 pixels. If the uploaded image is smaller than 2560 pixels it will be compressed but retain it's original size. This is the core feature of the plugin and can not be disabled.", 'better-images' ); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th class="title-column" scope="row"><?php esc_html_e( 'JPEG quality', 'better-images' ); ?></th>
-					<td class="select-column" valign="top">
-						<select id="quality" name="quality">
-						<?php for ( $i = 1; $i <= 100; $i++ ) : ?>
-							<option value="<?php echo $i; ?>" <?php if ( $compression_level === $i ) : ?> selected <?php endif; ?>><?php echo $i; ?></option>
-						<?php endfor; ?>
-						</select>
-					</td>
-					<td>
-						<p class="description"><?php esc_html_e( 'We have tweaked the plugin to give you the best balance between quality and file size. However, feel free to experiment with the best compression level for your specific need.', 'better-images' ); ?></p>
-						<p class="description"><?php esc_html_e( 'Recommended value: ', 'better-images' ); ?><code>62</code>
-						<br><?php esc_html_e( 'WordPress default value: ', 'better-images' ); ?><code>82</code></p>
-					</td>
-				</tr>
-				<tr>
-					<th class="title-column" scope="row"><?php esc_html_e( 'Sharpen the image', 'better-images' ); ?></th>
-					<td class="select-column" valign="top">
-						<select name="sharpen_yesno" id="sharpen_yesno">
-							<option value="yes" <?php echo ( 'yes' === $sharpen_image_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
-							<option value="no" <?php echo ( 'no' === $sharpen_image_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
-						</select>
-					</td>
-					<td>
-						<p class="description"><?php esc_html_e( 'Sharpens the original image and all other size variants to make your image pop and look better.', 'better-images' ); ?></p>
-					</td>
-				</tr>
-				<tr>
+            <table class="form-table" style="max-width: 1024px;">
+                <tr>
+                    <th class="title-column"
+                        scope="row"><?php esc_html_e( 'Resize and compress the original full resolution image', 'better-images' ); ?></th>
+                    <td class="select-column" valign="top">
+                        <select name="resize_yesno" id="resize_yesno" disabled>
+                            <option value="yes" <?php echo ( 'yes' === $resizing_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
+                            <option value="no" <?php echo ( 'no' === $resizing_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
+                        </select>
+                    </td>
+                    <td>
+                        <p class="description"><?php esc_html_e( "Resizes and compresses the uploaded image to the maximum size of 2560 pixels. If the uploaded image is smaller than 2560 pixels it will be compressed but retain it's original size. This is the core feature of the plugin and can not be disabled.", 'better-images' ); ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="title-column" scope="row"><?php esc_html_e( 'JPEG quality', 'better-images' ); ?></th>
+                    <td class="select-column" valign="top">
+                        <select id="quality" name="quality">
+							<?php for ( $i = 1; $i <= 100; $i ++ ) : ?>
+                                <option value="<?php echo $i; ?>" <?php if ( $compression_level === $i ) : ?> selected <?php endif; ?>><?php echo $i; ?></option>
+							<?php endfor; ?>
+                        </select>
+                    </td>
+                    <td>
+                        <p class="description"><?php esc_html_e( 'We have tweaked the plugin to give you the best balance between quality and file size. However, feel free to experiment with the best compression level for your specific need.', 'better-images' ); ?></p>
+                        <p class="description"><?php esc_html_e( 'Recommended value: ', 'better-images' ); ?>
+                            <code>62</code>
+                            <br><?php esc_html_e( 'WordPress default value: ', 'better-images' ); ?><code>82</code></p>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="title-column"
+                        scope="row"><?php esc_html_e( 'Sharpen the image', 'better-images' ); ?></th>
+                    <td class="select-column" valign="top">
+                        <select name="sharpen_yesno" id="sharpen_yesno">
+                            <option value="yes" <?php echo ( 'yes' === $sharpen_image_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
+                            <option value="no" <?php echo ( 'no' === $sharpen_image_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
+                        </select>
+                    </td>
+                    <td>
+                        <p class="description"><?php esc_html_e( 'Sharpens the original image and all other size variants to make your image pop and look better.', 'better-images' ); ?></p>
+                    </td>
+                </tr>
+                <tr>
 					<?php if ( $wnbi_imagick_installed ) { ?>
 
-						<th class="title-column" scope="row"><?php esc_html_e( 'Remove EXIF data from image but keep color space profile', 'better-images' ); ?></th>
-						<td class="select-column" valign="top">
-							<select name="remove_exif_yesno" id="remove_exif_yesno">
-								<option value="yes" <?php echo ( 'yes' === $remove_exif_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
-								<option value="no" <?php echo ( 'no' === $remove_exif_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
-							</select>
-						</td>
-						<td>
-							<p class="description"><?php esc_html_e( 'EXIF data is information about the image embedded in the image file. This data is in most cases not used. Removing this data can shave off up to 30 kb per size variant. The color space profile will be retained so the upload image will look the same as on you computer.', 'better-images' ); ?></p>
-						</td>
+                        <th class="title-column"
+                            scope="row"><?php esc_html_e( 'Remove EXIF data from image but keep color space profile', 'better-images' ); ?></th>
+                        <td class="select-column" valign="top">
+                            <select name="remove_exif_yesno" id="remove_exif_yesno">
+                                <option value="yes" <?php echo ( 'yes' === $remove_exif_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
+                                <option value="no" <?php echo ( 'no' === $remove_exif_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
+                            </select>
+                        </td>
+                        <td>
+                            <p class="description"><?php esc_html_e( 'EXIF data is information about the image embedded in the image file. This data is in most cases not used. Removing this data can shave off up to 30 kb per size variant. The color space profile will be retained so the upload image will look the same as on you computer.', 'better-images' ); ?></p>
+                        </td>
 
 					<?php } else { ?>
 
-						<th class="title-column" scope="row"><?php esc_html_e( 'Remove EXIF data from image', 'better-images' ); ?></th>
-						<td class="select-column" valign="top">
-							<select name="remove_exif_yesno" id="remove_exif_yesno" disabled >
-								<option value="yes" selected="selected"><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
-								<option value="no"><?php esc_html_e( 'No', 'better-images' ); ?></option>
-							</select>
-						</td>
-						<td>
-							<p class="description"><?php esc_html_e( 'EXIF data is information about the image embedded in the image file. This data is in most cases not used. Removing this data can shave off up to 30 kb per size variant. GD can not preserve EXIF so this feature is turned on by default.', 'better-images' ); ?></p>
-							<a href="https://wordpress.org/plugins/better-images/#faq" target="_blank" title="Read more about GD in our FAQ section" class="description"><?php esc_html_e( 'Read more about GD in our FAQ section', 'better-images' ); ?></a>
-						</td>
+                        <th class="title-column"
+                            scope="row"><?php esc_html_e( 'Remove EXIF data from image', 'better-images' ); ?></th>
+                        <td class="select-column" valign="top">
+                            <select name="remove_exif_yesno" id="remove_exif_yesno" disabled>
+                                <option value="yes"
+                                        selected="selected"><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
+                                <option value="no"><?php esc_html_e( 'No', 'better-images' ); ?></option>
+                            </select>
+                        </td>
+                        <td>
+                            <p class="description"><?php esc_html_e( 'EXIF data is information about the image embedded in the image file. This data is in most cases not used. Removing this data can shave off up to 30 kb per size variant. GD can not preserve EXIF so this feature is turned on by default.', 'better-images' ); ?></p>
+                            <a href="https://wordpress.org/plugins/better-images/#faq" target="_blank"
+                               title="Read more about GD in our FAQ section"
+                               class="description"><?php esc_html_e( 'Read more about GD in our FAQ section', 'better-images' ); ?></a>
+                        </td>
 
 					<?php } ?>
-				</tr>
-				<tr>
-					<th class="title-column" scope="row"><?php esc_html_e( 'Convert PNG image to JPEG', 'better-images' ); ?></th>
-					<td class="select-column" valign="top">
-						<select name="convert_png_yesno" id="convert_png_yesno">
-							<option value="yes" <?php echo ( 'yes' === $convert_png_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
-							<option value="no" <?php echo ( 'no' === $convert_png_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
-						</select>
-					</td>
-					<td>
-						<p class="description"><?php esc_html_e( 'A PNG image can be up to 20 times larger than the equivalent image in JPEG. Converting PNG to JPEG will not only save you a lot of disk space, but also make your website load much faster.', 'better-images' ); ?></p>
-					</td>
-				</tr>
-				<tr>
+                </tr>
+                <tr>
+                    <th class="title-column"
+                        scope="row"><?php esc_html_e( 'Convert PNG image to JPEG', 'better-images' ); ?></th>
+                    <td class="select-column" valign="top">
+                        <select name="convert_png_yesno" id="convert_png_yesno">
+                            <option value="yes" <?php echo ( 'yes' === $convert_png_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
+                            <option value="no" <?php echo ( 'no' === $convert_png_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
+                        </select>
+                    </td>
+                    <td>
+                        <p class="description"><?php esc_html_e( 'A PNG image can be up to 20 times larger than the equivalent image in JPEG. Converting PNG to JPEG will not only save you a lot of disk space, but also make your website load much faster.', 'better-images' ); ?></p>
+                    </td>
+                </tr>
+                <tr>
 					<?php if ( $wnbi_imagick_installed ) { ?>
 
-						<th class="title-column" scope="row"><?php esc_html_e( 'Convert image with CMYK color mode to RGB', 'better-images' ); ?></th>
-						<td class="select-column" valign="top">
-							<select name="convert_cmyk_yesno" id="convert_cmyk_yesno">
-								<option value="yes" <?php echo ( 'yes' === $convert_cmyk_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
-								<option value="no" <?php echo ( 'no' === $convert_cmyk_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
-							</select>
-						</td>
-						<td>
-							<p class="description"><?php esc_html_e( 'CMYK color mode is used on images meant to be used in print. WordPress will not be able to compress the image so you will end upp with multiple variants of the image in different sizes, each of them weighing in at the same size in mega byte as the original full size image. Enable this feature to convert the image to RGB mode before any resizing or compression occurs.', 'better-images' ); ?></p>
-						</td>
+                        <th class="title-column"
+                            scope="row"><?php esc_html_e( 'Convert image with CMYK color mode to RGB', 'better-images' ); ?></th>
+                        <td class="select-column" valign="top">
+                            <select name="convert_cmyk_yesno" id="convert_cmyk_yesno">
+                                <option value="yes" <?php echo ( 'yes' === $convert_cmyk_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
+                                <option value="no" <?php echo ( 'no' === $convert_cmyk_enabled ) ? 'selected="selected"' : ''; ?>><?php esc_html_e( 'No', 'better-images' ); ?></option>
+                            </select>
+                        </td>
+                        <td>
+                            <p class="description"><?php esc_html_e( 'CMYK color mode is used on images meant to be used in print. WordPress will not be able to compress the image so you will end upp with multiple variants of the image in different sizes, each of them weighing in at the same size in mega byte as the original full size image. Enable this feature to convert the image to RGB mode before any resizing or compression occurs.', 'better-images' ); ?></p>
+                        </td>
 
 					<?php } else { ?>
 
-						<th class="title-column" scope="row"><?php esc_html_e( 'Convert image with CMYK color mode to RGB', 'better-images' ); ?></th>
-						<td class="select-column" valign="top">
-							<select name="convert_cmyk_yesno" id="convert_cmyk_yesno" disabled >
-								<option value="yes" selected="selected"><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
-								<option value="no"><?php esc_html_e( 'No', 'better-images' ); ?></option>
-							</select>
-						</td>
-						<td>
-							<p class="description"><?php esc_html_e( 'GD can not handle CMYK color space so all CMYK images are converted to RGB by default.', 'better-images' ); ?></p>
-							<a href="https://wordpress.org/plugins/better-images/#faq" target="_blank" title="Read more about GD in our FAQ section" class="description"><?php esc_html_e( 'Read more about GD in our FAQ section', 'better-images' ); ?></a>
-						</td>
+                        <th class="title-column"
+                            scope="row"><?php esc_html_e( 'Convert image with CMYK color mode to RGB', 'better-images' ); ?></th>
+                        <td class="select-column" valign="top">
+                            <select name="convert_cmyk_yesno" id="convert_cmyk_yesno" disabled>
+                                <option value="yes"
+                                        selected="selected"><?php esc_html_e( 'Yes', 'better-images' ); ?></option>
+                                <option value="no"><?php esc_html_e( 'No', 'better-images' ); ?></option>
+                            </select>
+                        </td>
+                        <td>
+                            <p class="description"><?php esc_html_e( 'GD can not handle CMYK color space so all CMYK images are converted to RGB by default.', 'better-images' ); ?></p>
+                            <a href="https://wordpress.org/plugins/better-images/#faq" target="_blank"
+                               title="Read more about GD in our FAQ section"
+                               class="description"><?php esc_html_e( 'Read more about GD in our FAQ section', 'better-images' ); ?></a>
+                        </td>
 
 					<?php } ?>
-				</tr>
-				<tr>
-					<th class="title-column" scope="row"><?php esc_html_e( 'More things that Better Images does', 'better-images' ); ?></th>
-					<td class="select-column" valign="top">
+                </tr>
+                <tr>
+                    <th class="title-column"
+                        scope="row"><?php esc_html_e( 'More things that Better Images does', 'better-images' ); ?></th>
+                    <td class="select-column" valign="top">
 
-					</td>
-					<td>
-						<p class="description"><?php esc_html_e( 'Checks if the image already exist to avoid duplicates.', 'better-images' ); ?>
-						<br><?php esc_html_e( 'Replaces special characters and non english letters in the filename.', 'better-images' ); ?>
-						<br><?php esc_html_e( 'Adds a max height of 768 pixels to medium_large size variant.', 'better-images' ); ?></p>
-					</td>
-				</tr>
-			</table>
+                    </td>
+                    <td>
+                        <p class="description"><?php esc_html_e( 'Checks if the image already exist to avoid duplicates.', 'better-images' ); ?>
+                            <br><?php esc_html_e( 'Replaces special characters and non english letters in the filename.', 'better-images' ); ?>
+                            <br><?php esc_html_e( 'Adds a max height of 768 pixels to medium_large size variant.', 'better-images' ); ?>
+                        </p>
+                    </td>
+                </tr>
+            </table>
 
-			<p class="submit" style="margin-top:10px;border-top:1px solid #eee;padding-top:20px;">
-				<input type="hidden" name="action" value="update" />
+            <p class="submit" style="margin-top:10px;border-top:1px solid #eee;padding-top:20px;">
+                <input type="hidden" name="action" value="update"/>
 				<?php wp_nonce_field( 'wnbi-options-update' ); ?>
-				<input id="submit" name="wnbi-options-update" class="button button-primary" type="submit" value="<?php esc_html_e( 'Save Changes', 'better-images' ); ?>">
-			</p>
-		</form>
-		<div class="ratings-box">
+                <input id="submit" name="wnbi-options-update" class="button button-primary" type="submit"
+                       value="<?php esc_html_e( 'Save Changes', 'better-images' ); ?>">
+            </p>
+        </form>
+        <div class="ratings-box">
 
-			<p><?php esc_html_e( 'If you like this plugin please consider writing a review and giving us 5 stars.', 'better-images' ); ?></p>
+            <p><?php esc_html_e( 'If you like this plugin please consider writing a review and giving us 5 stars.', 'better-images' ); ?></p>
 
-			<div style="display: flex; justify-content: space-between;">
-				<div><a href="https://wordpress.org/support/plugin/better-images/reviews/#new-post" target="_blank"><?php esc_html_e( 'Write a review', 'better-images' ); ?></a></div>
-				<div class="wporg-ratings" aria-label="5 av 5 stars" style="color:#ffb900;">
-					<span class="dashicons dashicons-star-filled"></span>
-					<span class="dashicons dashicons-star-filled"></span>
-					<span class="dashicons dashicons-star-filled"></span>
-					<span class="dashicons dashicons-star-filled"></span>
-					<span class="dashicons dashicons-star-filled"></span>
-				</div>
-			</div>
+            <div style="display: flex; justify-content: space-between;">
+                <div><a href="https://wordpress.org/support/plugin/better-images/reviews/#new-post"
+                        target="_blank"><?php esc_html_e( 'Write a review', 'better-images' ); ?></a></div>
+                <div class="wporg-ratings" aria-label="5 av 5 stars" style="color:#ffb900;">
+                    <span class="dashicons dashicons-star-filled"></span>
+                    <span class="dashicons dashicons-star-filled"></span>
+                    <span class="dashicons dashicons-star-filled"></span>
+                    <span class="dashicons dashicons-star-filled"></span>
+                    <span class="dashicons dashicons-star-filled"></span>
+                </div>
+            </div>
 
-		</div>
-	</div>
+        </div>
+    </div>
 	<?php
 }
 
@@ -409,8 +427,8 @@ function wnbi_wp_handle_upload_prefilter( $file ) {
  * Helper function to replace the file extension of
  * a file with another one.
  *
- * @param String  $filename Filename.
- * @param String  $new_extension The new extenstion.
+ * @param String $filename Filename.
+ * @param String $new_extension The new extenstion.
  * @param Boolean $include_dir Include the path in the response.
  */
 function wnbi_replace_extension( $filename, $new_extension, $include_dir ) {
@@ -430,6 +448,7 @@ function wnbi_replace_extension( $filename, $new_extension, $include_dir ) {
  */
 function wnbi_file_is_png( $filename ) {
 	$ext = pathinfo( $filename, PATHINFO_EXTENSION );
+
 	return ( gettype( $ext ) === 'string' ) && ( strtoupper( $ext ) === 'PNG' );
 }
 
@@ -440,14 +459,16 @@ function wnbi_file_is_png( $filename ) {
  */
 function wnbi_file_is_jpeg( $filename ) {
 	$ext = pathinfo( $filename, PATHINFO_EXTENSION );
+
 	return ( gettype( $ext ) === 'string' ) && ( ( strtoupper( $ext ) === 'JPG' ) ||
-		( strtoupper( $ext ) === 'JPEG' ) );
+	                                             ( strtoupper( $ext ) === 'JPEG' ) );
 }
 
 /**
  * Check if a given file exists in the uploads folder or not.
  *
- * @param  String $filename The filename to check for.
+ * @param String $filename The filename to check for.
+ *
  * @return Boolean If file exists, true, otherwise false.
  */
 function wnbi_does_file_exists( $filename ) {
@@ -456,10 +477,10 @@ function wnbi_does_file_exists( $filename ) {
 	try {
 		$wp_upload_subdir = substr( wp_upload_dir()['subdir'], 1 );
 
-		$search_filename = empty($wp_upload_subdir)
+		$search_filename = empty( $wp_upload_subdir )
 			? $filename
 			: $wp_upload_subdir . DIRECTORY_SEPARATOR . $filename;
-	
+
 		return intval(
 			$wpdb->get_var(
 				$wpdb->prepare(
@@ -470,9 +491,10 @@ function wnbi_does_file_exists( $filename ) {
 				)
 			)
 		);
-	} catch (Exception $e) {
+	} catch ( Exception $e ) {
 		// If anything goes wrong, let the file pass.
-		wnbi_debug_log('Could not check for duplicate filename, skipping.');
+		wnbi_debug_log( 'Could not check for duplicate filename, skipping.' );
+
 		return 0;
 	}
 }
@@ -482,10 +504,30 @@ function wnbi_does_file_exists( $filename ) {
  *
  * - sanitize filename (remove swedish letters etc)
  *
- * @param  String $filename The filename.
+ * @param String $filename The filename.
  */
 function wnbi_sanitize_file_name( $filename ) {
 	wnbi_debug_log( 'Step 2: Sanitizing filename of uploaded image.' );
+
+	$file_mime = wp_check_filetype( $filename );
+
+	if ( ! $file_mime || ! array_key_exists( 'type', $file_mime ) ) {
+		wnbi_debug_log( 'No file type found, skipping.' );
+
+		return $filename;
+	}
+
+	if ( 'image/jpeg' !== $file_mime['type'] && 'image/png' !== $file_mime['type']
+	     && 'image/gif' !== $file_mime['type'] && 'image/svg+xml' !== $file_mime['type']
+	     && 'image/bmp' !== $file_mime['type'] && 'image/avif' !== $file_mime['type']
+	     && 'image/webp' !== $file_mime['type'] && 'image/tiff' !== $file_mime['type'] ) {
+
+		wnbi_debug_log( 'Not a supported image format or no image, skipping. Type: ' . $file_mime['type'] );
+
+		return $filename;
+	}
+
+	wnbi_debug_log( 'File mime: ' . $file_mime['type'] . ', ' . $file_mime['ext'] );
 
 	$sanitized_filename = remove_accents( $filename ); // Convert to ASCII.
 
@@ -523,9 +565,10 @@ function wnbi_wp_handle_upload( $image_data ) {
 	$convert_png_enabled  = get_option( 'wnbi_better_images_convert_png' ) === 'yes';
 
 	if ( array_key_exists( 'type', $image_data ) && ( 'image/jpeg' !== $image_data['type']
-		&& ( 'image/png' !== $image_data['type'] ) ) ) {
+	                                                  && ( 'image/png' !== $image_data['type'] ) ) ) {
 
 		wnbi_debug_log( 'Not a supported image format or no image, skipping. Type: ' . $image_data['type'] );
+
 		return $image_data;
 	}
 
@@ -547,6 +590,7 @@ function wnbi_wp_handle_upload( $image_data ) {
 
 			if ( ! $convert_cmyk_enabled || ! $wnbi_imagick_installed ) {
 				wnbi_debug_log( 'Conversion to CMYK disabled, will not check for CMYK colorspace on image, proceeding.' );
+
 				return $image_data;
 			}
 
@@ -567,6 +611,7 @@ function wnbi_wp_handle_upload( $image_data ) {
 			$image_data['file'] = wnbi_replace_extension( $image_data['file'], 'jpg', true );
 			$image_data['url']  = wnbi_replace_extension( $image_data['url'], 'jpg', true );
 			$image_data['type'] = 'image/jpeg';
+			debug_log( 'AJJEMEN: ' . $image_data );
 		}
 
 		if ( $wnbi_imagick_installed ) {
@@ -605,7 +650,7 @@ function wnbi_image_make_intermediate_size( $resized_file ) {
 		return new WP_Error( 'invalid_image', __( 'Could not read image size.', 'better-images' ), $resized_file );
 	}
 
-	list($orig_w, $orig_h, $orig_type) = $size;
+	list( $orig_w, $orig_h, $orig_type ) = $size;
 
 	$remove_exif_enabled   = get_option( 'wnbi_better_images_remove_exif' ) === 'yes';
 	$sharpen_image_enabled = get_option( 'wnbi_better_images_sharpen_image' ) === 'yes';
@@ -660,14 +705,16 @@ function wnbi_wp_generate_attachment_metadata( $image_data ) {
 
 	if ( ! array_key_exists( 'file', $image_data ) ) {
 
-		wnbi_debug_log("Media type not supported, skipping post processing.");
+		wnbi_debug_log( "Media type not supported, skipping post processing." );
+
 		// If the media type is not an image we don't do this step.
 		return $image_data;
 	}
 
 	if ( ! wnbi_file_is_jpeg( $image_data['file'] ) ) {
 
-		wnbi_debug_log("Image not supported (not JPEG), skipping post processing.");
+		wnbi_debug_log( "Image not supported (not JPEG), skipping post processing." );
+
 		return $image_data;
 	}
 
@@ -688,7 +735,7 @@ function wnbi_wp_generate_attachment_metadata( $image_data ) {
 		return new WP_Error( 'invalid_image', __( 'Could not read image size.', 'better-images' ), $image_data['file'] );
 	}
 
-	list($orig_w, $orig_h, $orig_type) = $size;
+	list( $orig_w, $orig_h, $orig_type ) = $size;
 
 	if ( ( $orig_w > $max_size || $orig_h > $max_size ) && $resizing_enabled ) {
 
